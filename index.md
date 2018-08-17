@@ -1,6 +1,6 @@
 
-# WIP
-
 Catch me on:
-- [Github](https://github.com/lascorbe)
-- [Twitter](https://twitter.com/lascorbe)
+- [@lascorbe](https://twitter.com/lascorbe)
+
+I also run a small conference called NSSpain:
+- [NSSpain](http://nsspain.com)
