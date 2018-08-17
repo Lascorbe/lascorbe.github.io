@@ -1,4 +1,5 @@
 lascorbe.github.io
 ==================
 
-Lascorbe's Website
+[Github](https://github.com/lascorbe)
+[Twitter](https://twitter.com/lascorbe)
