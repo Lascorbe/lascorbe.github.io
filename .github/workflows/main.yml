@@ -1,0 +1,26 @@
+name: Build and Deploy lascorbe.com
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "*"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v1
+      - name: Build Site
+        run: swift run LascorbeCom
+      - name: Deploy Content
+        uses: peaceiris/actions-gh-pages@v2
+        env:
+          PERSONAL_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
+          EXTERNAL_REPOSITORY: lascorbe/lascorbe.github.io
+          PUBLISH_BRANCH: master
+          PUBLISH_DIR: ./Output
+        with:
+          commitMessage: ${{ github.event.head_commit.message }}
