@@ -290,23 +290,20 @@ h3 {
 }
 
 .footer {
-    padding: 1em 0;
-    color: #ccc;
-    font-size: 90%;
+    color: #80807f;
     text-align: center;
 }
-
 .footer a {
-    padding: 1em 0;
-    color: #ccc;
+    color: #80807f;
     font-size: 90%;
     text-decoration: underline;
     text-align: center;
 }
-
-.footer .pure-menu a:hover,
-.footer .pure-menu a:focus {
-    background: none;
+.footer a:hover,
+.footer a:focus {
+    text-decoration: none;
+    color: #000;
+    background-color: #8bc9f7;
 }
 
 .pure-menu {
