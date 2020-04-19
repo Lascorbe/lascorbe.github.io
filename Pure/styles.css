@@ -6,11 +6,22 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'HKGrotesk';
+    src: url('../Font/HKGrotesk-Regular.woff2') format('woff2'),
+    url('../Font/HKGrotesk-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    font-family: 'SourceCodePro';
+}
+
+html body {
+    font-family: 'HKGrotesk', sans-serif;
 }
 
 .l-box {
@@ -68,6 +79,7 @@ h3 {
     padding-top: 2em;
     background: #98C8F3;
     color: rgba(0, 0, 0, 0.8);
+/*    font-family: 'SourceCodePro';*/
 }
 .sidebar-header {
     border-bottom: 1px solid #000000;
@@ -290,6 +302,7 @@ h3 {
 }
 
 .footer {
+    padding-bottom: 1em;
     color: #80807f;
     text-align: center;
 }
@@ -313,9 +326,12 @@ h3 {
 .social-media {
     display: none;
 }
-
 .social-icon {
     font-size: 1.5em;
+}
+
+.pure-g [class*=pure-u] {
+    font-family: 'HKGrotesk';
 }
 
 @media (min-width: 48em) {
@@ -372,6 +388,14 @@ h3 {
         font-size: 1em;
     }
     
+    .post-description {
+        font-size: 1.2em;
+    }
+    
+    .page-description {
+        font-size: 1.2em;
+    }
+    
     .post-category {
         font-size: 80%;
     }
@@ -387,51 +411,44 @@ pre {
     padding: 16px 0;
     border-radius: 8px;
 }
-
 pre code {
-    font-family: monospace;
+    font-family: 'SourceCodePro', monospace;
+    font-size: 0.9em;
     display: block;
     padding: 0 20px;
     color:  rgba(215, 215, 215, 1);
     line-height: 1.4em;
-    font-size: 0.95em;
     overflow-x: auto;
     white-space: pre;
     -webkit-overflow-scrolling: touch;
 }
-
+pre code span {
+    font-family: 'SourceCodePro', monospace;
+}
 pre code .keyword {
     color: rgba(252, 95, 193, 1);
 }
-
 pre code .type {
     color: rgba(158, 241, 221, 1);
 }
-
 pre code .call {
     color: rgba(158, 241, 221, 1);
 }
-
 pre code .property {
     color: #21ab9d;
 }
-
 pre code .number {
     color: rgba(200, 184, 106, 1);
 }
-
 pre code .string {
     color: rgba(250, 106, 102, 1);
 }
-
 pre code .comment {
     color: #6b8a94;
 }
-
 pre code .dotAccess {
     color: rgba(158, 241, 221, 1);
 }
-
 pre code .preprocessing {
     color: #b68a00;
 }
