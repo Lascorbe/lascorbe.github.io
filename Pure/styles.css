@@ -9,12 +9,13 @@
 }
 
 a {
-    text-decoration: none;
+    text-decoration: underline;
     color: rgba(0, 0, 0, 0.8);
 }
 a:hover,
 a:focus {
-    text-decoration: underline;
+    text-decoration: none;
+    background-color: #8bc9f7;
 }
 
 h1 {
@@ -41,21 +42,39 @@ h3 {
     margin: 1em 1em 0;
 }
 
+.pure-menu-link:focus,
+.pure-menu-link:hover {
+    text-decoration: none;
+    background-color: #000;
+    color: #fff !important;
+}
+/*.pure-menu-selected:visited:focus {*/
+/*.pure-menu-selected:visited:hover {*/
+/*    color: #fff !important;*/
+/*}*/
+
 .sidebar {
-    padding-left: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
     padding-top: 2em;
     background: #98C8F3;
     color: rgba(0, 0, 0, 0.8);
 }
-
 .sidebar-header {
     border-bottom: 1px solid #000000;
 }
-
 .sidebar-profile {
     padding-top: 1em;
 }
-
+.sidebar-profile a {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.8);
+}
+.sidebar-profile a:hover,
+.sidebar-profile a:focus {
+    background-color: #000;
+    color: #fff;
+}
 .social-media-container {
     padding-top: 1em;
 }
@@ -66,10 +85,12 @@ h3 {
 }
 .brand-title {
     text-transform: capitalize;
+    margin-top: 10px;
 }
 .brand-tagline {
     font-weight: 300;
     color: rgba(0, 0, 0, 0.8);
+    margin-top: 5px;
 }
 
 .nav-list {
@@ -105,19 +126,92 @@ h3 {
     font-size: 80%;
     font-weight: 500;
     letter-spacing: 0.1em;
+    margin-bottom: 1em;
 }
 
 .content {
-    padding: 0 1em 0;
+    padding: 1em;
 }
 
-.post {
-    padding-bottom: 0.5em;
+.mini-post {
+    background-color: #f3f3f3;
+    padding: 2em;
+    border-radius: 15px;
+    overflow: hidden;
 }
+.mini-post a {
+    text-decoration: none;
+}
+.mini-post a:hover,
+.mini-post a:focus {
+    text-decoration: underline;
+    background-color: transparent;
+}
+.mini-post-title {
+    font-size: 2em;
+    color: #222;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.mini-post-avatar {
+    border-radius: 50px;
+    float: right;
+    margin-left: 1em;
+}
+.mini-post-description {
+    color: #444;
+    line-height: 1.8em;
+}
+.mini-post-meta {
+    color: #999;
+    font-size: 90%;
+    margin: 0;
+}
+.mini-post-tags {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+.mini-post-category {
+    margin: 0 0.1em;
+    padding: 0.3em 1em;
+    color: #fff;
+    background: #999;
+    font-size: 60%;
+    border-radius: 8px;
+}
+.mini-post-category a:hover,
+.mini-post-category a:focus {
+    text-decoration: none;
+    background-color: #8bc9f7;
+}
+/*    American Palette https://flatuicolors.com/palette/us*/
+.mini-post-category-swift {
+    background: #90AFC5;
+}
+.mini-post-category-ios {
+    background: #336B87;
+}
+.mini-post-category-tutorial {
+    background: #2A3132;
+}
+.mini-post-category-other {
+    background: #763526;
+}
+.mini-post-images {
+    margin: 1em 0;
+}
+.mini-post-image-meta {
+    margin-top: -3.5em;
+    margin-left: 1em;
+    color: #fff;
+    text-shadow: 0 1px 1px #333;
+}
+
 .post-title {
     font-size: 2em;
     color: #222;
-    margin-bottom: 0.2em;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 .post-avatar {
     border-radius: 50px;
@@ -126,42 +220,45 @@ h3 {
 }
 .post-description {
     color: #444;
-    line-height: 1.8em;
+    font-size: 1em;
 }
-
-.post-description a {
+.page-description {
+    color: #444;
+    font-size: 1em;
+}
+.post-description-text a {
     text-decoration: underline;
 }
-
+.post-description-text a:hover,
+.post-description-text a:focus {
+    text-decoration: none;
+    background-color: #8bc9f7;
+}
+.post-description-text {
+    margin-top: 0;
+    margin-bottom: 0;
+}
 .post-meta {
     color: #999;
-    font-size: 90%;
+    font-size: 1em;
     margin: 0;
 }
-
 .post-tags {
     margin-top: 0.3em;
     margin-bottom: 0.3em;
 }
-
-.author__avatar img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 1em;
-}
-
 .post-category {
     margin: 0 0.1em;
     padding: 0.3em 1em;
     color: #fff;
     background: #999;
-    font-size: 60%;
+    font-size: 0.8em;
     border-radius: 8px;
 }
-
+.post-category a {
+    text-decoration: none;
+}
 /*    American Palette https://flatuicolors.com/palette/us*/
-
 .post-category-swift {
     background: #90AFC5;
 }
@@ -175,14 +272,11 @@ h3 {
     background: #763526;
 }
 
-.post-images {
-    margin: 1em 0;
-}
-.post-image-meta {
-    margin-top: -3.5em;
-    margin-left: 1em;
-    color: #fff;
-    text-shadow: 0 1px 1px #333;
+.author__avatar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 1em;
 }
 
 .footer {
@@ -219,19 +313,19 @@ h3 {
 
 @media (min-width: 48em) {
     .content {
-        padding: 2em 1em 0;
+        padding: 2em;
         margin-left: 25%;
-    }
-    
-    .header {
-        margin: 3em 3em 0;
-        text-align: left;
     }
     
     .sidebar {
         position: fixed;
         top: 0;
         bottom: 0;
+    }
+    
+    .header {
+        margin: 3em 3em 0;
+        text-align: left;
     }
     
     .social-media {
@@ -249,8 +343,6 @@ h3 {
     }
     
     .author__avatar img {
-        padding: 5px;
-        border: 1px solid #bfbfbf;
         width: 125px;
         height: 125px;
     }
@@ -263,6 +355,18 @@ h3 {
         position: fixed;
         top: 0em;
         background: #fff;
+    }
+    
+    .post-title {
+        font-size: 4em;
+    }
+    
+    .post-description {
+        font-size: 1.5em;
+    }
+    
+    .page-description {
+        font-size: 1.2em;
     }
 }
 
