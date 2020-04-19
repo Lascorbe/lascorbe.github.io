@@ -1,7 +1,16 @@
+@font-face {
+    font-family: 'SourceCodePro';
+    src: url('../Font/sourcecodepro-regular-webfont.woff2') format('woff2'),
+    url('../Font/sourcecodepro-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    font-family: 'SourceCodePro';
 }
 
 .l-box {
@@ -79,18 +88,14 @@ h3 {
     padding-top: 1em;
 }
 
-.brand-title,
+.brand-title {
+    margin: 0;
+    text-transform: capitalize;
+}
 .brand-tagline {
     margin: 0;
-}
-.brand-title {
-    text-transform: capitalize;
-    margin-top: 10px;
-}
-.brand-tagline {
-    font-weight: 300;
+    font-size: 1em;
     color: rgba(0, 0, 0, 0.8);
-    margin-top: 5px;
 }
 
 .nav-list {
@@ -160,7 +165,7 @@ h3 {
 }
 .mini-post-description {
     color: #444;
-    line-height: 1.8em;
+    line-height: 1.5em;
 }
 .mini-post-meta {
     color: #999;
@@ -168,21 +173,21 @@ h3 {
     margin: 0;
 }
 .mini-post-tags {
-    margin-top: 0.3em;
+    margin-top: 0.5em;
     margin-bottom: 0.3em;
 }
-.mini-post-category {
-    margin: 0 0.1em;
-    padding: 0.3em 1em;
-    color: #fff;
-    background: #999;
-    font-size: 60%;
-    border-radius: 8px;
-}
-.mini-post-category a:hover,
-.mini-post-category a:focus {
+.mini-post-tags a:hover,
+.mini-post-tags a:focus {
     text-decoration: none;
     background-color: #8bc9f7;
+}
+.mini-post-category {
+    margin-right: 0.4em;
+    padding: 0.4em 1em;
+    color: #fff;
+    background: #999;
+    font-size: 80%;
+    border-radius: 10px;
 }
 /*    American Palette https://flatuicolors.com/palette/us*/
 .mini-post-category-swift {
@@ -240,23 +245,28 @@ h3 {
 }
 .post-meta {
     color: #999;
-    font-size: 1em;
+    font-size: 0.9em;
     margin: 0;
 }
 .post-tags {
-    margin-top: 0.3em;
+    margin-top: 0.8em;
     margin-bottom: 0.3em;
 }
+.post-tags a {
+    text-decoration: none;
+}
+.post-tags a:hover,
+.post-tags a:focus {
+    text-decoration: none;
+    background-color: #8bc9f7;
+}
 .post-category {
-    margin: 0 0.1em;
-    padding: 0.3em 1em;
+    margin-right: 0.4em;
+    padding: 0.6em 1em;
     color: #fff;
     background: #999;
-    font-size: 0.8em;
-    border-radius: 8px;
-}
-.post-category a {
-    text-decoration: none;
+    font-size: 70%;
+    border-radius: 10px;
 }
 /*    American Palette https://flatuicolors.com/palette/us*/
 .post-category-swift {
@@ -358,15 +368,15 @@ h3 {
     }
     
     .post-title {
-        font-size: 4em;
+        font-size: 3em;
     }
     
-    .post-description {
-        font-size: 1.5em;
+    .post-meta {
+        font-size: 1em;
     }
     
-    .page-description {
-        font-size: 1.2em;
+    .post-category {
+        font-size: 80%;
     }
 }
 
