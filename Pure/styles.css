@@ -302,7 +302,7 @@ h3 {
 }
 
 .footer {
-    padding-bottom: 1em;
+    padding-bottom: 2em;
     color: #80807f;
     text-align: center;
 }
@@ -407,7 +407,7 @@ h3 {
 
 pre {
     margin-bottom: 1.5em;
-    background-color: rgba(34, 37, 41, 1);
+    background-color: #2d2d2d;
     padding: 16px 0;
     border-radius: 8px;
 }
@@ -416,7 +416,7 @@ pre code {
     font-size: 0.9em;
     display: block;
     padding: 0 20px;
-    color:  rgba(215, 215, 215, 1);
+    color:  #b9b28d;
     line-height: 1.4em;
     overflow-x: auto;
     white-space: pre;
@@ -425,30 +425,30 @@ pre code {
 pre code span {
     font-family: 'SourceCodePro', monospace;
 }
-pre code .keyword {
-    color: rgba(252, 95, 193, 1);
+pre code .la-keyword {
+    color: #c951aa;
 }
-pre code .type {
-    color: rgba(158, 241, 221, 1);
+pre code .la-type {
+    color: #6c6ec5;
 }
-pre code .call {
-    color: rgba(158, 241, 221, 1);
+pre code .la-call {
+    color: #62989c;
 }
-pre code .property {
-    color: #21ab9d;
+pre code .la-property {
+    color: #71b892;
 }
-pre code .number {
-    color: rgba(200, 184, 106, 1);
+pre code .la-number {
+    color: #cf6254;
 }
-pre code .string {
-    color: rgba(250, 106, 102, 1);
+pre code .la-string {
+    color: #cf6254;
 }
-pre code .comment {
-    color: #6b8a94;
+pre code .la-comment {
+    color: #777775;
 }
-pre code .dotAccess {
-    color: rgba(158, 241, 221, 1);
+pre code .la-dotAccess {
+    color: #71b892;
 }
-pre code .preprocessing {
+pre code .la-preprocessing {
     color: #b68a00;
 }
