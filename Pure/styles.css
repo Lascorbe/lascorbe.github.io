@@ -35,7 +35,7 @@ a {
 a:hover,
 a:focus {
     text-decoration: none;
-    background-color: #8bc9f7;
+    background-color: #cf6254;
 }
 
 h1 {
@@ -191,7 +191,7 @@ h3 {
 .mini-post-tags a:hover,
 .mini-post-tags a:focus {
     text-decoration: none;
-    background-color: #8bc9f7;
+    background-color: #cf6254;
 }
 .mini-post-category {
     margin-right: 0.4em;
@@ -249,7 +249,7 @@ h3 {
 .post-description-text a:hover,
 .post-description-text a:focus {
     text-decoration: none;
-    background-color: #8bc9f7;
+    background-color: #cf6254;
 }
 .post-description-text {
     margin-top: 0;
@@ -270,7 +270,7 @@ h3 {
 .post-tags a:hover,
 .post-tags a:focus {
     text-decoration: none;
-    background-color: #8bc9f7;
+    background-color: #cf6254;
 }
 .post-category {
     margin-right: 0.4em;
@@ -316,7 +316,7 @@ h3 {
 .footer a:focus {
     text-decoration: none;
     color: #000;
-    background-color: #8bc9f7;
+    background-color: #cf6254;
 }
 
 .pure-menu {
