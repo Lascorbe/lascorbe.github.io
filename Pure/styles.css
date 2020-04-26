@@ -256,6 +256,11 @@ h3 {
     margin-top: 0;
     margin-bottom: 0;
 }
+.post-description img {
+    max-width: 768px;
+    width: 100%;
+    height: auto;
+}
 .post-meta {
     color: #999;
     font-size: 0.9em;
@@ -263,7 +268,7 @@ h3 {
 }
 .post-tags {
     margin-top: 0.8em;
-    margin-bottom: 0.3em;
+    margin-bottom: 1.5em;
 }
 .post-tags a {
     text-decoration: none;
@@ -279,7 +284,7 @@ h3 {
     color: #fff;
     background: #999;
     font-size: 70%;
-    border-radius: 10px;
+    border-radius: 20px;
 }
 /*    American Palette https://flatuicolors.com/palette/us*/
 .post-category-swift {
@@ -406,6 +411,15 @@ h3 {
     justify-content: center;
 }
 
+p code {
+    border-radius: 8px;
+    background-color: #ececec;
+    padding-top: 0.1em;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    padding-bottom: 0.1em;
+    font-size: 0.9em;
+}
 pre {
     margin-bottom: 1.5em;
     background-color: #2d2d2d;
