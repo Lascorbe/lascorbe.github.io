@@ -155,6 +155,7 @@ h3 {
     padding: 2em;
     border-radius: 15px;
     overflow: hidden;
+    margin-top: 2em;
 }
 .mini-post a {
     text-decoration: none;
