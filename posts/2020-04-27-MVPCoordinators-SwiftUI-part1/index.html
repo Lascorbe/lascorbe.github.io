@@ -75,7 +75,7 @@
         <span class="la-call">coordinate</span>(to: coordinator)
     }
 }
-</code></pre><p>Next, we have to handle the presentation on the window. Let's go back to our <code>RootMasterCoordinator</code> and set up the <code>start()</code> function:</p><pre><code><span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
+</code></pre><p>We're injecting the <code>UIWindow</code> through the <code>init</code>, and then passing it to <code>MasterView</code>'s coordinator.</p><p>Next, we have to handle the presentation on the window. Let's go back to our <code>RootMasterCoordinator</code> and set up the <code>start()</code> function:</p><pre><code><span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
     
     <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
@@ -246,7 +246,7 @@
     <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
     }
-    
+  
     <span class="la-keyword">func</span> start() {
         <span class="la-keyword">let</span> coordinator = <span class="la-type">RootMasterCoordinator</span>(window: window)
         <span class="la-call">coordinate</span>(to: coordinator)
