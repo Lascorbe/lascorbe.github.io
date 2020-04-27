@@ -260,6 +260,7 @@ h3 {
     max-width: 768px;
     width: 100%;
     height: auto;
+    border-radius: 5px;
 }
 .post-meta {
     color: #999;
@@ -423,17 +424,18 @@ p code {
 pre {
     margin-bottom: 1.5em;
     background-color: #2d2d2d;
-    padding: 16px 0;
-    border-radius: 8px;
+    padding: 0;
+    border-radius: 5px;
 }
 pre code {
     font-family: 'SourceCodePro', monospace;
     font-size: 0.9em;
     display: block;
-    padding: 0 20px;
+    padding: 20px;
     color:  #b9b28d;
     line-height: 1.4em;
     overflow-x: auto;
+    overflow-y: hidden;
     white-space: pre;
     -webkit-overflow-scrolling: touch;
 }
