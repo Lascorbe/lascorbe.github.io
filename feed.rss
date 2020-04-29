@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content"><channel><title>Luis Ascorbe</title><description>Software Developer. Tech Lead. Speaker. Conference Organizer.</description><link>https://lascorbe.com</link><language>en</language><lastBuildDate>Tue, 28 Apr 2020 17:03:25 +0200</lastBuildDate><pubDate>Tue, 28 Apr 2020 17:03:25 +0200</pubDate><ttl>250</ttl><atom:link href="https://lascorbe.com/feed.rss" rel="self" type="application/rss+xml"/><item><guid isPermaLink="true">https://lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2</guid><title>MVP + Coordinators in SwiftUI (part 2)</title><description>2nd part of exploring a MVP+Coordinators approach on SwiftUI without using UIKit.</description><link>https://lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2</link><pubDate>Tue, 28 Apr 2020 13:00:00 +0200</pubDate><content:encoded><![CDATA[<img src="https://lascorbe.com/images/posts/2020-04-26-MVPCoordinators-SwiftUI/1.jpg"/><p><em>Public repo: For those of you who want to check out the code right away here is the repo: <a href="https://github.com/Lascorbe/SwiftUI-MVP-Coordinator">https://github.com/Lascorbe/SwiftUI-MVP-Coordinator</a>.</em></p><p>Welcome back! This is the 2nd part of the blog posts on creating an MVP+Coordinators app with SwiftUI. <strong>If you're looking for the 1st part, please go here instead:</strong> <a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1</a>.</p><p>In the first part we learned how to set up an entire screen with the MVP pattern, we created our base Coordinator and our first 2 coordinators, and we saw how to wrap our view in a <code>NavigationView</code> and how we can implement <code>NavigationLink</code> so it doesn't depend of anything else in the view.</p><p>Now we're going to see how to extract that <code>NavigationLink</code> from <code>MasterView</code>.</p><p>Here's what we completed in the first part of this series, our starting point for this second part:</p><pre><code><span class="la-comment">// MARK: Coordinator</span>
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content"><channel><title>Luis Ascorbe</title><description>Software Developer. Tech Lead. Speaker. Conference Organizer.</description><link>https://lascorbe.com</link><language>en</language><lastBuildDate>Wed, 29 Apr 2020 12:37:32 +0200</lastBuildDate><pubDate>Wed, 29 Apr 2020 12:37:32 +0200</pubDate><ttl>250</ttl><atom:link href="https://lascorbe.com/feed.rss" rel="self" type="application/rss+xml"/><item><guid isPermaLink="true">https://lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2</guid><title>MVP + Coordinators in SwiftUI (part 2)</title><description>Blog series on exploring a MVP+Coordinators approach in SwiftUI without using UIKit. 2nd part.</description><link>https://lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2</link><pubDate>Tue, 28 Apr 2020 13:00:00 +0200</pubDate><content:encoded><![CDATA[<img src="https://lascorbe.com/images/posts/2020-04-26-MVPCoordinators-SwiftUI/1.jpg"/><p><em>Public repo: For those of you who want to check out the code right away here is the repo: <a href="https://github.com/Lascorbe/SwiftUI-MVP-Coordinator">https://github.com/Lascorbe/SwiftUI-MVP-Coordinator</a>.</em></p><p>Welcome back! This is the 2nd part of the blog posts on creating an MVP+Coordinators app with SwiftUI. <strong>If you're looking for the 1st part, please go here instead:</strong> <a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1</a>.</p><p>In the first part we learned how to set up an entire screen with the MVP pattern, we created our base Coordinator and our first 2 coordinators, and we saw how to wrap our view in a <code>NavigationView</code> and how we can implement <code>NavigationLink</code> so it doesn't depend of anything else in the view.</p><p>Now we're going to see how to extract that <code>NavigationLink</code> from <code>MasterView</code>.</p><p>Here's what we completed in the first part of this series, our starting point for this second part:</p><pre><code><span class="la-comment">// MARK: Coordinator</span>
 
 <span class="la-keyword">protocol</span> Coordinator {
     <span class="la-keyword">func</span> start()
@@ -32,7 +32,7 @@
 <span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
     
-    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>?) {
         <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
     }
     
@@ -72,6 +72,7 @@
     
     <span class="la-keyword">init</span>(coordinator: <span class="la-type">MasterCoordinator</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
     }
 }
 
@@ -158,6 +159,7 @@
     
     <span class="la-keyword">init</span>(coordinator: <span class="la-type">MasterCoordinator</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
     }
   
   	<span class="la-comment">// using `some` we don't have to specify the MasterPresenting's associatedtype</span>
@@ -172,7 +174,7 @@
 }
 </code></pre><p>We still don't want <code>MasterView</code> to know what <code>MasterPresenting</code> we are injecting, so let's keep using the <code>MasterPresenting</code> protocol, this time as a generic one (<code>&lt;T: MasterPresenting&gt;</code>).</p><p>Perfect, now we can go to <code>MasterPresenter</code>'s coordinator and add the <code>presentDetailView</code> function. Remember we had a <code>MasterCoordinator</code> protocol which was empty? Not anymore:</p><pre><code><span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
 
-<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span>: <span class="la-type">Coordinator</span> {
+<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">func</span> presentDetailView(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-keyword">let</span> coordinator = <span class="la-type">NavigationDetailCoordinator</span>(isPresented: isPresented)
         <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
@@ -225,7 +227,7 @@
 
 <span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
 
-<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span>: <span class="la-type">Coordinator</span> {
+<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">func</span> presentDetailView(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-keyword">let</span> coordinator = <span class="la-type">NavigationDetailCoordinator</span>(isPresented: isPresented)
         <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
@@ -235,7 +237,7 @@
 <span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
     
-    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>?) {
         <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
     }
     
@@ -295,6 +297,7 @@
     
     <span class="la-keyword">init</span>(coordinator: <span class="la-type">MasterCoordinator</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
     }
   
     <span class="la-keyword">func</span> onButtonPressed(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> { 
@@ -304,12 +307,30 @@
 
 <span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
     <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
-  
+    
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
-        <span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) ,
+        <span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>),
                          navigationView: { isPresented <span class="la-keyword">in
-                             self</span>.<span class="la-property">presenter</span>.<span class="la-call">onButtonPressed</span>(isPresented: $isPresented)
+                            self</span>.<span class="la-property">presenter</span>.<span class="la-call">onButtonPressed</span>(isPresented: isPresented)
         })
+    }
+}
+
+<span class="la-keyword">struct</span> NavigationButton&lt;CV: <span class="la-type">View</span>, NV: <span class="la-type">View</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@State private var</span> isPresented = <span class="la-keyword">false
+    
+    var</span> contentView: <span class="la-type">CV</span>
+    <span class="la-keyword">var</span> navigationView: (<span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-type">NV</span>
+    
+    <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-type">Button</span>(action: {
+            <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = <span class="la-keyword">true</span>
+        }) {
+            contentView
+                .<span class="la-call">background</span>(
+                    <span class="la-call">navigationView</span>($isPresented)
+            )
+        }
     }
 }
 </code></pre><h2>2. ⚡️ Changing base Coordinator's implementation</h2><p>We just saw how to extract the <code>NavigationLink</code> from our <code>MasterView</code> creating a handy new <code>NavigationButton</code> along the way. Now we're going to reimplement our base Coordinator to return SwiftUI Views from <code>start()</code>.</p><p>Let's change it, this is our new <code>Coordinator</code> protocol:</p><pre><code><span class="la-keyword">protocol</span> Coordinator {
@@ -358,6 +379,7 @@
     
     <span class="la-keyword">init</span>(coordinator: <span class="la-type">C</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
     }
   
     {...}
@@ -395,7 +417,7 @@
 
 <span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
 
-<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span>: <span class="la-type">Coordinator</span> {
+<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">func</span> presentDetailView(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-keyword">let</span> coordinator = <span class="la-type">NavigationDetailCoordinator</span>(isPresented: isPresented)
         <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
@@ -405,7 +427,7 @@
 <span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
     
-    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>?) {
         <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
     }
     
@@ -466,6 +488,7 @@
     
     <span class="la-keyword">init</span>(coordinator: <span class="la-type">C</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
     }
   
     <span class="la-keyword">func</span> onButtonPressed(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> { 
@@ -475,12 +498,30 @@
 
 <span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
     <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
-  
+    
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
-        <span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) ,
+        <span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>),
                          navigationView: { isPresented <span class="la-keyword">in
-                             self</span>.<span class="la-property">presenter</span>.<span class="la-call">onButtonPressed</span>(isPresented: $isPresented)
+                            self</span>.<span class="la-property">presenter</span>.<span class="la-call">onButtonPressed</span>(isPresented: isPresented)
         })
+    }
+}
+
+<span class="la-keyword">struct</span> NavigationButton&lt;CV: <span class="la-type">View</span>, NV: <span class="la-type">View</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@State private var</span> isPresented = <span class="la-keyword">false
+    
+    var</span> contentView: <span class="la-type">CV</span>
+    <span class="la-keyword">var</span> navigationView: (<span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-type">NV</span>
+    
+    <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-type">Button</span>(action: {
+            <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = <span class="la-keyword">true</span>
+        }) {
+            contentView
+                .<span class="la-call">background</span>(
+                    <span class="la-call">navigationView</span>($isPresented)
+            )
+        }
     }
 }
 </code></pre><h2>3. 🚨 Switch from navigation to modal</h2><p>We've learned how we can navigate from one view to another one with <code>NavigationLink</code>, but what if I want to present the view as a modal? Remember the <code>.sheet</code> modifier we talked about in <a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">part 1</a>? Well, I have a small trick for that, which is wrapping <code>.sheet</code> in a View:</p><pre><code><span class="la-keyword">struct</span> ModalLink&lt;T: <span class="la-type">View</span>&gt;: <span class="la-type">View</span> {
@@ -522,7 +563,7 @@
 }
 </code></pre><p>Notice that we have to add a new <code>associatedtype</code> for every different view we want to navigate to, and we're done. Then we have to link it to the coordinator in the presenter's implementation, and the call to the appropiate coordinator from the presenter's coordinator:</p><pre><code><span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
 
-<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span>: <span class="la-type">Coordinator</span> {
+<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">func</span> presentDetailView1(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-comment">// here we decide here to which coordinator we'd like to navigate to</span>
         <span class="la-keyword">let</span> coordinator = <span class="la-type">NavigationDetailCoordinator</span>(isPresented: isPresented)
@@ -551,7 +592,7 @@
         <span class="la-keyword">return</span> coordinator.<span class="la-call">presentDetailView2</span>(isPresented: isPresented)
     }
 }
-</code></pre><p>In this section we saw how to easily change presenting a view as a modal instead of in a navigation stack. We also learned how to present several views from the same view. And we've arrived to the end of part 2.</p><p>I'm not going to add the "what we've done so far" bit here because it's starting to get big. But I invite you to <a href="https://github.com/Lascorbe/SwiftUI-MVP-Coordinator">take a look at the public repo where I'm doing all</a>, where the final implementation is, with more classes and examples, and both ways of navigating, with navigation stack and modals.</p><h2>🏁 Conclusion</h2><p>We've learned how to extract that <code>NavigationLink</code> from our <code>MasterView</code> creating a handy new <code>NavigationButton</code> along the way. We saw how to setup our Coordinator so we can return SwiftUI Views from the <code>start()</code> function. We learned how to easily change presenting a view as a modal instead of in a navigation stack. And we also saw how to present several views from the same view.</p><p>That's it! <strong>We've completed part 2 of this series.</strong> In the next post, part 3, we'll see how to reimplement our Coordinator protocol to store its identifier, parent and children. To do that, to create stored properies in protocol extensions, we'll create a mixin using the power of the Objective-C runtime, sounds cool? <strong>Then stay tuned for part 3!</strong></p><p>I hope you liked <a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">part 1</a> and <a href="https://lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2">part 2</a> covering my experience trying to decouple the navigation in SwftUI.</p><p>Thank you for reading. Let me know what you think and share it with your friends!</p><p>Luis.</p>]]></content:encoded></item><item><guid isPermaLink="true">https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1</guid><title>MVP + Coordinators in SwiftUI (part 1)</title><description>1st part of exploring a MVP+Coordinators approach on SwiftUI without using UIKit.</description><link>https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1</link><pubDate>Mon, 27 Apr 2020 12:00:00 +0200</pubDate><content:encoded><![CDATA[<img src="https://lascorbe.com/images/posts/2020-04-26-MVPCoordinators-SwiftUI/1.jpg"/><p><em>Public repo: For those of you who want to check out the code right away here is the repo: <a href="https://github.com/Lascorbe/SwiftUI-MVP-Coordinator">https://github.com/Lascorbe/SwiftUI-MVP-Coordinator</a>.</em></p><p><strong>I didn't want to do much on SwiftUI until the next version is announced</strong> due to my previous experience with Swift, I mean, it'll likely introduce a lot of breaking changes. I still remember the pain of migrating between Swift versions (Swift 3 to 4 anyone?), and I didn't want to live that again.</p><p>But all changed, quarantine arrived and I wanted to give a hand building a new app for a friend. I thought well, it could be nice to try SwiftUI making a real app. I liked what I saw about it until now, but after using it... what a great tool it is! <strong>Something that took you 2 days to do with UIKit now you can do it in 2 hours</strong>, it just boosts development so much. It's what we were waiting for while we were looking at things like hot reloading of our frontend colleagues, or React Native, or Flutter... Plus a declarative layout, nothing left to ask for.</p><p>But in SwiftUI not everything is a land of unicorns, specially when you discover that not only navigation is a bit tied to the views, but <a href="https://twitter.com/Dimillian/status/1184745928739184640?s=20">there're</a> <a href="https://twitter.com/tomatoterrorist/status/1242823885621350401?s=20">some</a> <a href="https://twitter.com/SwiftUILab/status/1156091686151475200?s=20">broken</a> <a href="https://twitter.com/ishabazz/status/1234274177231638529?s=20">things</a> <a href="https://twitter.com/search?q=broken%20swiftui&src=typed_query">between iOS 13 minor versions</a> and other platforms.</p><p>I can't do much about how broken an Apple framework/tool is (above reporting <s>radars</s> <a href="https://feedbackassistant.apple.com">feedbacks</a>), but I can explore <strong>how navigation can be decoupled from Views</strong>, or at least I can try. Also, <a href="https://twitter.com/Lascorbe/status/1253992068814430209?s=20">looks like there's some interest</a>.</p><p>So in this post <strong>I'm going to show you how to use SwiftUI with Coordinators</strong>, and using the MVP design pattern.</p><p>I choose MVP and <a href="https://khanlou.com/2015/10/coordinators-redux/">Coordinators</a>, because I've worked with both, and because Coordinators became the defacto design pattern to route our navigation in a UIKit app (<a href="https://vimeo.com/144116310">thanks Soroush! 😊</a>). I don't know if those 2 are the best design patterns to use with SwiftUI, maybe not, maybe something like redux would fit better, I don't know. But it doesn't hurt to try.</p><p>I'm not going to explain how coordinators work, <a href="https://khanlou.com/2015/10/coordinators-redux/">there're</a> <a href="https://www.hackingwithswift.com/articles/175/advanced-coordinator-pattern-tutorial-ios">several</a> <a href="https://khanlou.com/tag/advanced-coordinators/">blog posts</a> explaining it far better and from smarter people than me which I recommend you to check out if you haven't.</p><p>Anyway, let's go for it, are you ready? Let's create a new project, <strong>in the next section I'm going to explain how to set up our 1st screen with MVP</strong>.</p><h2>1. ⌨️ Setting up our 1st screen with MVP</h2><p>With our project created, let's define the 1st view of our app:</p><pre><code><span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
+</code></pre><p>In this section we saw how to easily change presenting a view as a modal instead of in a navigation stack. We also learned how to present several views from the same view. And we've arrived to the end of part 2.</p><p>I'm not going to add the "what we've done so far" bit here because it's starting to get big. But I invite you to <a href="https://github.com/Lascorbe/SwiftUI-MVP-Coordinator">take a look at the public repo where I'm doing all</a>, where the final implementation is, with more classes and examples, and both ways of navigating, with navigation stack and modals.</p><h2>🏁 Conclusion</h2><p>We've learned how to extract that <code>NavigationLink</code> from our <code>MasterView</code> creating a handy new <code>NavigationButton</code> along the way. We saw how to setup our Coordinator so we can return SwiftUI Views from the <code>start()</code> function. We learned how to easily change presenting a view as a modal instead of in a navigation stack. And we also saw how to present several views from the same view.</p><p>That's it! <strong>We've completed part 2 of this series.</strong> In the next post, part 3, we'll see how to reimplement our Coordinator protocol to store its identifier, parent and children. To do that, to create stored properies in protocol extensions, we'll create a mixin using the power of the Objective-C runtime, sounds cool? <strong>Then stay tuned for part 3!</strong></p><p>I hope you liked <a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">part 1</a> and <a href="https://lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2">part 2</a> covering my experience trying to decouple the navigation in SwftUI.</p><p>Thank you for reading. Let me know what you think and share it with your friends!</p><p>Luis.</p>]]></content:encoded></item><item><guid isPermaLink="true">https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1</guid><title>MVP + Coordinators in SwiftUI (part 1)</title><description>Blog series on exploring a MVP+Coordinators approach in SwiftUI without using UIKit. 1st part.</description><link>https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1</link><pubDate>Mon, 27 Apr 2020 12:00:00 +0200</pubDate><content:encoded><![CDATA[<img src="https://lascorbe.com/images/posts/2020-04-26-MVPCoordinators-SwiftUI/1.jpg"/><p><em>Public repo: For those of you who want to check out the code right away here is the repo: <a href="https://github.com/Lascorbe/SwiftUI-MVP-Coordinator">https://github.com/Lascorbe/SwiftUI-MVP-Coordinator</a>.</em></p><p><strong>I didn't want to do much on SwiftUI until the next version is announced</strong> due to my previous experience with Swift, I mean, it'll likely introduce a lot of breaking changes. I still remember the pain of migrating between Swift versions (Swift 3 to 4 anyone?), and I didn't want to live that again.</p><p>But all changed, quarantine arrived and I wanted to give a hand building a new app for a friend. I thought well, it could be nice to try SwiftUI making a real app. I liked what I saw about it until now, but after using it... what a great tool it is! <strong>Something that took you 2 days to do with UIKit now you can do it in 2 hours</strong>, it just boosts development so much. It's what we were waiting for while we were looking at things like hot reloading of our frontend colleagues, or React Native, or Flutter... Plus a declarative layout, nothing left to ask for.</p><p>But in SwiftUI not everything is a land of unicorns, specially when you discover that not only navigation is a bit tied to the views, but <a href="https://twitter.com/Dimillian/status/1184745928739184640?s=20">there're</a> <a href="https://twitter.com/tomatoterrorist/status/1242823885621350401?s=20">some</a> <a href="https://twitter.com/SwiftUILab/status/1156091686151475200?s=20">broken</a> <a href="https://twitter.com/ishabazz/status/1234274177231638529?s=20">things</a> <a href="https://twitter.com/search?q=broken%20swiftui&src=typed_query">between iOS 13 minor versions</a> and other platforms.</p><p>I can't do much about how broken an Apple framework/tool is (above reporting <s>radars</s> <a href="https://feedbackassistant.apple.com">feedbacks</a>), but I can explore <strong>how navigation can be decoupled from Views</strong>, or at least I can try. Also, <a href="https://twitter.com/Lascorbe/status/1253992068814430209?s=20">looks like there's some interest</a>.</p><p>So in this post <strong>I'm going to show you how to use SwiftUI with Coordinators</strong>, and using the MVP design pattern.</p><p>I choose MVP and <a href="https://khanlou.com/2015/10/coordinators-redux/">Coordinators</a>, because I've worked with both, and because Coordinators became the defacto design pattern to route our navigation in a UIKit app (<a href="https://vimeo.com/144116310">thanks Soroush! 😊</a>). I don't know if those 2 are the best design patterns to use with SwiftUI, maybe not, maybe something like redux would fit better, I don't know. But it doesn't hurt to try.</p><p>I'm not going to explain how coordinators work, <a href="https://khanlou.com/2015/10/coordinators-redux/">there're</a> <a href="https://www.hackingwithswift.com/articles/175/advanced-coordinator-pattern-tutorial-ios">several</a> <a href="https://khanlou.com/tag/advanced-coordinators/">blog posts</a> explaining it far better and from smarter people than me which I recommend you to check out if you haven't.</p><p>Anyway, let's go for it, are you ready? Let's create a new project, <strong>in the next section I'm going to explain how to set up our 1st screen with MVP</strong>.</p><h2>1. ⌨️ Setting up our 1st screen with MVP</h2><p>With our project created, let's define the 1st view of our app:</p><pre><code><span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-type">Text</span>(<span class="la-string">"We will rock the stage at NSSpain again"</span>)
     }
@@ -631,7 +672,7 @@
 </code></pre><p>We're injecting the <code>UIWindow</code> through the <code>init</code>, and then passing it to <code>MasterView</code>'s coordinator.</p><p>Next, we have to handle the presentation on the window. Let's go back to our <code>RootMasterCoordinator</code> and set up the <code>start()</code> function:</p><pre><code><span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
     
-    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>?) {
         <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
     }
     
@@ -693,7 +734,7 @@
 <span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
     
-    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>?) {
         <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
     }
     
@@ -756,7 +797,7 @@
 </code></pre><p>What's going on here? We're telling <code>MasterView</code> that its content is wrapped in a <code>NavigationView</code>, kind of a <code>UINavigationController</code>. Then with <code>NavigationLink</code>, we create a <code>push</code> action to <code>EmptyView()</code> which is going to be triggered when <code>Text</code> is pressed.</p><p>But we don't want either <code>MasterView</code> to know that is being presented in a <code>NavigationView</code>, or that we're presenting <code>EmptyView()</code>, or that it must use <code>NavigationLink</code> to present it.</p><p>So first, we're going to move <code>NavigationView</code> out. Where should it go? Yup, the coordinator:</p><pre><code><span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
     
-    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>?) {
         <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
     }
     
@@ -841,7 +882,7 @@
 <span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
     
-    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>?) {
         <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
     }
     
