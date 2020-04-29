@@ -1,0 +1,672 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Luis Ascorbe"/><link rel="canonical" href="https://lascorbe.com/posts/2020-04-29-MVPCoordinators-SwiftUI-part3"/><meta name="twitter:url" content="https://lascorbe.com/posts/2020-04-29-MVPCoordinators-SwiftUI-part3"/><meta name="og:url" content="https://lascorbe.com/posts/2020-04-29-MVPCoordinators-SwiftUI-part3"/><title>MVP + Coordinators in SwiftUI (part 3) | Luis Ascorbe</title><meta name="twitter:title" content="MVP + Coordinators in SwiftUI (part 3) | Luis Ascorbe"/><meta name="og:title" content="MVP + Coordinators in SwiftUI (part 3) | Luis Ascorbe"/><meta name="description" content="Blog series on exploring a MVP+Coordinators approach in SwiftUI without using UIKit. 3rd part."/><meta name="twitter:description" content="Blog series on exploring a MVP+Coordinators approach in SwiftUI without using UIKit. 3rd part."/><meta name="og:description" content="Blog series on exploring a MVP+Coordinators approach in SwiftUI without using UIKit. 3rd part."/><meta name="twitter:card" content="summary"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Luis Ascorbe"/><meta name="twitter:image" content="https://lascorbe.com/android-chrome-512x512.png"/><meta name="og:image" content="https://lascorbe.com/android-chrome-512x512.png"/><link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous"/><link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/grids-responsive-min.css" type="text/css"/><link rel="stylesheet" href="/Pure/styles.css" type="text/css"/><link rel="stylesheet" href="/FontAwesomeCSS/all.css" type="text/css"/><link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32"/><link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16"/><link rel="apple-touch-icon" href="/apple-touch-icon.png" type="image/png" sizes="180x180"/><link rel="manifest" href="/site.webmanifest"/></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="sidebar-header"><div><div class="pure-menu pure-menu-horizontal"><ul class="pure-menu-list"><li class="pure-menu-item pure-menu-selected"><a class="pure-menu-link" href="/">Blog</a></li><li class="pure-menu-item pure-menu-selected"><a class="pure-menu-link" href="/about">About</a></li></ul></div></div></div><div class="sidebar-profile"><div id="layout" class="pure-g"><div class="author__avatar"><img src="https://avatars0.githubusercontent.com/u/1515520?s=460&v=4"/></div><div class="pure-u-md-1-1 pure-u-3-4"><h1 class="brand-title"><a href="/">Luis Ascorbe</a></h1><h3 class="brand-tagline">Software Developer. Tech Lead. Speaker. Conference Organizer.</h3></div></div><div class="social-media-container"><div id="layout" class="pure-g"><div class="pure-u-md-1-1"><a href="mailto:hi+blog@ascor.be" target="_blank"><i class="far fa-envelope l-box social-icon"></i><a class="social-media" href="mailto:hi+blog@ascor.be" target="_blank">Email</a></a></div><div class="pure-u-md-1-1"><a href="https://github.com/lascorbe" target="_blank"><i class="fab fa-github l-box social-icon"></i><a class="social-media" href="https://github.com/lascorbe" target="_blank">GitHub</a></a></div><div class="pure-u-md-1-1"><a href="https://twitter.com/lascorbe" target="_blank"><i class="fab fa-twitter l-box social-icon"></i><a class="social-media" href="https://twitter.com/lascorbe" target="_blank">Twitter</a></a></div><div class="pure-u-md-1-1"><a href="https://www.linkedin.com/in/lascorbe" target="_blank"><i class="fab fa-linkedin l-box social-icon"></i><a class="social-media" href="https://www.linkedin.com/in/lascorbe" target="_blank">LinkedIn</a></a></div></div></div></div></div><div class="content pure-u-1 pure-u-md-3-4 pure-u-xl-6-10"><h2 class="post-title">MVP + Coordinators in SwiftUI (part 3)</h2><p class="post-meta">29 April 2020 · ⏱ 15 minutes</p><div class="post-tags"><a class="post-category post-category-swiftui" href="/tags/swiftui">swiftui</a><a class="post-category post-category-coordinator" href="/tags/coordinator">coordinator</a><a class="post-category post-category-mvp" href="/tags/mvp">mvp</a><a class="post-category post-category-article" href="/tags/article">article</a><a class="post-category post-category-series" href="/tags/series">series</a><a class="post-category post-category-part3" href="/tags/part3">part3</a><a class="post-category post-category-mixin" href="/tags/mixin">mixin</a><a class="post-category post-category-associatedobject" href="/tags/associatedobject">associatedobject</a></div><div class="post-description"><div class="description-text"><img src="/images/posts/2020-04-26-MVPCoordinators-SwiftUI/1.jpg"/><p><em>Public repo: For those of you who want to check out the code right away here is the repo: <a href="https://github.com/Lascorbe/SwiftUI-MVP-Coordinator">https://github.com/Lascorbe/SwiftUI-MVP-Coordinator</a>.</em></p><p>Welcome back! This is the 3rd part of the series on creating an MVP+Coordinators app in SwiftUI. If you're <strong>looking for the 1st part</strong>, please go here: <a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1</a>. If you're <strong>looking for the 2nd part instead</strong>, please go here: <a href="https://lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2">lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2</a>.</p><p><strong>In part 1</strong>, we learned how to set up an entire screen with the MVP pattern, we created our base <code>Coordinator</code> and our first two coordinators. We saw how to wrap our view in a <code>NavigationView</code> and how to implement <code>NavigationLink</code> so it doesn't depend of anything else in the view.</p><p><strong>In part 2</strong>, we learned how to extract <code>NavigationLink</code> from <code>MasterView</code> creating a handy new <code>NavigationButton</code> along the way. We saw how to setup the Coordinator protocol so we can return SwiftUI Views from the <code>start()</code> function. We learned how to change presenting a view as a modal instead of in a navigation stack. And we also saw how to present several views from the same view.</p><p><strong>In this part, the 3rd one</strong>, we're going to reimplement our Coordinator protocol to store the identifier, parent and children of the coordinators. We'll also deal with a bit of memory management so we don't create retain cycles. Are you ready? Let's go!</p><p>This is what we completed on <a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">part 1</a> and <a href="https://lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2">part 2</a>:</p><pre><code><span class="la-comment">// MARK: Coordinator</span>
+
+<span class="la-keyword">protocol</span> Coordinator {
+    <span class="la-keyword">associatedtype</span> U: <span class="la-type">View</span>
+    <span class="la-keyword">func</span> start() -&gt; <span class="la-type">U</span>
+}
+
+<span class="la-keyword">extension</span> <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">func</span> coordinate&lt;T: <span class="la-type">Coordinator</span>&gt;(to coordinator: <span class="la-type">T</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">return</span> coordinator.<span class="la-call">start</span>()
+    }
+}
+
+<span class="la-comment">// MARK: AppCoordinator</span>
+
+<span class="la-keyword">final class</span> AppCoordinator: <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
+    
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
+        <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
+    }
+    
+    <span class="la-keyword">@discardableResult
+    func</span> start() -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> coordinator = <span class="la-type">RootMasterCoordinator</span>(window: window)
+        <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
+    }
+}
+
+<span class="la-comment">// MARK: MasterCoordinator</span>
+
+<span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
+
+<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span> {
+    <span class="la-keyword">func</span> presentDetailView(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> coordinator = <span class="la-type">NavigationDetailCoordinator</span>(isPresented: isPresented)
+        <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
+    }
+}
+
+<span class="la-keyword">final class</span> RootMasterCoordinator: <span class="la-type">MasterCoordinator</span> {
+    <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
+    
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>?) {
+        <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
+    }
+    
+    <span class="la-keyword">func</span> start() -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> view = <span class="la-type">MasterFactory</span>.<span class="la-call">make</span>(with: <span class="la-keyword">self</span>)
+        <span class="la-keyword">let</span> navigation = <span class="la-type">NavigationView</span> { view }
+        <span class="la-keyword">let</span> hosting = <span class="la-type">UIHostingController</span>(rootView: navigation)
+        window?.<span class="la-property">rootViewController</span> = hosting
+        window?.<span class="la-call">makeKeyAndVisible</span>()
+        <span class="la-keyword">return</span> <span class="la-type">EmptyView</span>() 
+    }
+}
+
+<span class="la-comment">// MARK: DetailCoordinator</span>
+
+<span class="la-keyword">protocol</span> DetailCoordinator: <span class="la-type">Coordinator</span> {}
+
+<span class="la-keyword">final class</span> NavigationDetailCoordinator: <span class="la-type">DetailCoordinator</span> {
+    <span class="la-keyword">private var</span> isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;
+    
+    <span class="la-keyword">init</span>(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) {
+        <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = isPresented
+    }
+    
+    <span class="la-keyword">func</span> start() -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">return</span> <span class="la-type">NavigationLink</span>(destination: <span class="la-type">EmptyView</span>(), isActive: isPresented) {
+            <span class="la-type">EmptyView</span>()
+        }
+    }
+}
+
+<span class="la-comment">// MARK: Factory</span>
+
+<span class="la-keyword">enum</span> MasterFactory {
+    <span class="la-keyword">static func</span> make&lt;C: <span class="la-type">MasterCoordinator</span>&gt;(with coordinator: <span class="la-type">C</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> presenter = <span class="la-type">MasterPresenter</span>(coordinator: coordinator)
+        <span class="la-keyword">let</span> view = <span class="la-type">MasterView</span>(presenter: presenter)
+        <span class="la-keyword">return</span> view
+    }
+}
+
+<span class="la-comment">// MARK: MVP</span>
+
+<span class="la-keyword">struct</span> MasterViewModel {
+    <span class="la-keyword">let</span> date: <span class="la-type">Date</span>
+}
+
+<span class="la-keyword">protocol</span> MasterPresenting: <span class="la-type">ObservableObject</span> {
+    <span class="la-keyword">associatedtype</span> U: <span class="la-type">View</span>                                
+    <span class="la-keyword">var</span> viewModel: <span class="la-type">MasterViewModel</span> { <span class="la-keyword">get</span> }
+    <span class="la-keyword">func</span> onButtonPressed(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-type">U</span>
+}
+
+<span class="la-keyword">final class</span> MasterPresenter&lt;C: <span class="la-type">MasterCoordinator</span>&gt;: <span class="la-type">MasterPresenting</span> {
+    <span class="la-keyword">@Published private(set) var</span> viewModel: <span class="la-type">MasterViewModel</span>
+  
+    <span class="la-keyword">private let</span> coordinator: <span class="la-type">C</span>
+    
+    <span class="la-keyword">init</span>(coordinator: <span class="la-type">C</span>) {
+        <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
+    }
+  
+    <span class="la-keyword">func</span> onButtonPressed(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> { 
+        <span class="la-keyword">return</span> coordinator.<span class="la-call">presentDetailView</span>(isPresented: isPresented)
+    }
+}
+
+<span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
+    
+    <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>),
+                         navigationView: { isPresented <span class="la-keyword">in
+                            self</span>.<span class="la-property">presenter</span>.<span class="la-call">onButtonPressed</span>(isPresented: isPresented)
+        })
+    }
+}
+
+<span class="la-keyword">struct</span> NavigationButton&lt;CV: <span class="la-type">View</span>, NV: <span class="la-type">View</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@State private var</span> isPresented = <span class="la-keyword">false
+    
+    var</span> contentView: <span class="la-type">CV</span>
+    <span class="la-keyword">var</span> navigationView: (<span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-type">NV</span>
+    
+    <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-type">Button</span>(action: {
+            <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = <span class="la-keyword">true</span>
+        }) {
+            contentView
+                .<span class="la-call">background</span>(
+                    <span class="la-call">navigationView</span>($isPresented)
+                )
+        }
+    }
+}
+</code></pre><h2>1. 👾 Creating stored properties in <code>Coordinator</code></h2><p>In the previous parts, we created our <code>Coordinator</code> protocol where we set up the <code>start()</code> and <code>coordinate(:)</code> functions. Now, we're going to extend the functionality of this protocol, and we're going to start by adding a <code>parent</code> property to have a reference to the coordinator's parent.</p><p>How can we store this? I have to confess I used a trick, I used the Objective-C runtime to store them, creating a <em>Mixin</em>. Let's go to the <code>Coordinator</code> protocol:</p><pre><code><span class="la-keyword">protocol</span> Coordinator: <span class="la-type">AssociatedObject</span> { <span class="la-comment">// notice AssociatedObject conformance</span>
+    <span class="la-keyword">associatedtype</span> U: <span class="la-type">View</span>
+    <span class="la-keyword">associatedtype</span> P: <span class="la-type">Coordinator</span>
+    <span class="la-keyword">func</span> start() -&gt; <span class="la-type">U</span>
+}
+
+<span class="la-keyword">extension</span> <span class="la-type">Coordinator</span> {
+    <span class="la-comment">// parent must be `weak` so we don't create a retain cycle</span>
+    <span class="la-keyword">private(set) weak var</span> parent: <span class="la-type">P</span>? {
+        <span class="la-keyword">get</span> { <span class="la-call">associatedObject</span>(for: &amp;parentKey) }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;parentKey, policy: .<span class="la-dotAccess">weak</span>) }
+    }
+}
+    
+<span class="la-keyword">extension</span> <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">func</span> coordinate&lt;T: <span class="la-type">Coordinator</span>&gt;(to coordinator: <span class="la-type">T</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        coordinator.<span class="la-property">parent</span> = <span class="la-keyword">self as</span>? <span class="la-type">T</span>.<span class="la-type">P</span>
+        <span class="la-keyword">return</span> coordinator.<span class="la-call">start</span>()
+    }
+}
+
+<span class="la-keyword">private var</span> parentKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+</code></pre><p>What's a <strong>mixin</strong>? Well, <a href="https://jobandtalent.engineering/the-power-of-mixins-in-swift-f9013254c503">my friend Luis Recuenco explains it better than me on this blog post</a>, which I recommend you to read. In that post you can find the implementation of <code>AssociatedObject</code>, but <a href="https://github.com/Lascorbe/SwiftUI-MVP-Coordinator/blob/master/SwiftUI-Coordinator/SwiftUI-Coordinator/Helpers/AssociatedObject.swift">here's a direct link to its implementation in my project if you want to take a look</a> (I just copied Luis' implementation).</p><p>Long story short, mixins are a way of leveraging on composition instead of subclassing. Right now we want to create a <code>parent</code> property in our <code>Coordinator</code> protocol, but it'd be great if we don't have to define that property on every coordinator class that conforms to <code>Coordinator</code>. To do that, we could you use subclassing, create a base coordinator class and make all the coordinators subclasses, but <strong>I prefer to achieve polymorphic behavior and code reuse by composition instead of inheritance if I can</strong>.</p><p>Now that we have stored properties in the protocol extension, we can save the parent of every coordinator, leveraging again in the power of generics.</p><p>This last change to the <code>Coordinator</code> protocol impacts the coordinators' implementation, and we have to make small changes to them in order to conform to <code>Coordinator</code>:</p><pre><code><span class="la-keyword">final class</span> AppCoordinator: <span class="la-type">Coordinator</span> {
+    <span class="la-comment">// this is the root Coordinator so we can just point the parent to itself</span>
+    <span class="la-keyword">typealias</span> P = <span class="la-type">AppCoordinator</span> 
+    
+    {...}
+    
+    <span class="la-keyword">@discardableResult
+    func</span> start() -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> coordinator = <span class="la-type">RootMasterCoordinator</span>&lt;<span class="la-type">AppCoordinator</span>&gt;(window: window)
+        <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
+    }
+}
+
+<span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
+<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span>: <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">func</span> presentDetailView(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> coordinator = <span class="la-type">NavigationDetailCoordinator</span>&lt;<span class="la-type">Self</span>&gt;(isPresented: isPresented)
+        <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
+    }
+}
+
+<span class="la-keyword">final class</span> RootMasterCoordinator&lt;P: <span class="la-type">Coordinator</span>&gt;: <span class="la-type">MasterCoordinator</span> {
+    {...} 
+}
+
+<span class="la-keyword">final class</span> NavigationDetailCoordinator&lt;P: <span class="la-type">Coordinator</span>&gt;: <span class="la-type">DetailCoordinator</span> {
+    {...}
+}
+</code></pre><p>That's it! We set <code>AppCoordinator</code> parent to itself, since it won't have parent, then we set <code>RootMasterCoordinator</code>'s parent as <code>AppCoordinator</code> with <code>&lt;AppCoordinator&gt;</code> on the constructor. Then on the rest of our Coordinators we can use <code>&lt;Self&gt;</code> to set the parent type, if the function is in a protocol extension, otherwise just use the parent's type directly. And we have to add <code>&lt;P: Coordinator&gt;</code> to the coordinator implementations so we define their parents on construction as well (when calling their init).</p><p>Now we have to store all the children of the coordinator, but first we have to add a way to identify each coordinator instance individually. Let's do that then! Back to our <code>Coordinator</code> protocol:</p><pre><code><span class="la-keyword">protocol</span> Coordinator: <span class="la-type">AssociatedObject</span> {
+    {..}
+}
+
+<span class="la-keyword">extension</span> <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">private(set) var</span> identifier: <span class="la-type">UUID</span> {
+        <span class="la-keyword">get</span> {
+            <span class="la-keyword">guard let</span> identifier: <span class="la-type">UUID</span> = <span class="la-call">associatedObject</span>(for: &amp;identifierKey) <span class="la-keyword">else</span> {
+                <span class="la-keyword">self</span>.<span class="la-property">identifier</span> = <span class="la-type">UUID</span>()
+                <span class="la-keyword">return self</span>.<span class="la-property">identifier</span>
+            }
+            <span class="la-keyword">return</span> identifier
+        }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;identifierKey) }
+    }
+    
+    <span class="la-keyword">private(set) weak var</span> parent: <span class="la-type">P</span>? {
+        <span class="la-keyword">get</span> { <span class="la-call">associatedObject</span>(for: &amp;parentKey) }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;parentKey, policy: .<span class="la-dotAccess">weak</span>) }
+    }
+  
+    {...}
+}
+
+<span class="la-keyword">private var</span> identifierKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+<span class="la-keyword">private var</span> parentKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+</code></pre><p>Relying again on the power of the <code>AssociatedObject</code> protocol, aka the Objective-C runtime, we created a new stored property to lazily create the <code>identifier</code> on <code>get</code>.</p><p>Now we can add a way to store the children of the coordinator:</p><pre><code><span class="la-keyword">protocol</span> Coordinator: <span class="la-type">AssociatedObject</span> {
+    {..}
+}
+
+<span class="la-keyword">extension</span> <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">private(set) var</span> identifier: <span class="la-type">UUID</span> {
+        {...}
+    }
+  
+    <span class="la-keyword">private(set) var</span> children: [<span class="la-type">UUID</span>: <span class="la-type">Any</span>] {
+        <span class="la-keyword">get</span> {
+            <span class="la-keyword">guard let</span> children: [<span class="la-type">UUID</span>: <span class="la-type">Any</span>] = <span class="la-call">associatedObject</span>(for: &amp;childrenKey) <span class="la-keyword">else</span> {
+                <span class="la-keyword">self</span>.<span class="la-property">children</span> = [<span class="la-type">UUID</span>: <span class="la-type">Any</span>]()
+                <span class="la-keyword">return self</span>.<span class="la-property">children</span>
+            }
+            <span class="la-keyword">return</span> children
+        }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;childrenKey) }
+    }
+    
+    <span class="la-keyword">private(set) weak var</span> parent: <span class="la-type">P</span>? {
+        {...}
+    }
+  
+    <span class="la-keyword">private func</span> store&lt;T: <span class="la-type">Coordinator</span>&gt;(child coordinator: <span class="la-type">T</span>) {
+        children[coordinator.<span class="la-property">identifier</span>] = coordinator
+    }
+    
+    <span class="la-keyword">private func</span> free&lt;T: <span class="la-type">Coordinator</span>&gt;(child coordinator: <span class="la-type">T</span>) {
+        children.<span class="la-call">removeValue</span>(forKey: coordinator.<span class="la-property">identifier</span>)
+    }
+  
+    {...}
+}
+
+<span class="la-keyword">private var</span> identifierKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+<span class="la-keyword">private var</span> childrenKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+<span class="la-keyword">private var</span> parentKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+</code></pre><p>We've added the property <code>children</code>, and the functions <code>store</code> and <code>free</code> to manage adding and removing children.</p><p>Great! We have learned how to implement stored properies in protocol extensions creating a mixin, using the power of the Objective-C runtime. In the next section, we'll see what we have to do to manage memory correctly so we don't create retain cycles.</p><p>This is what we've done so far:</p><pre><code><span class="la-comment">// MARK: Coordinator</span>
+
+<span class="la-keyword">protocol</span> Coordinator: <span class="la-type">AssociatedObject</span> {
+    <span class="la-keyword">associatedtype</span> U: <span class="la-type">View</span>
+    <span class="la-keyword">associatedtype</span> P: <span class="la-type">Coordinator</span>
+    <span class="la-keyword">func</span> start() -&gt; <span class="la-type">U</span>
+}
+
+<span class="la-keyword">extension</span> <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">private(set) var</span> identifier: <span class="la-type">UUID</span> {
+        <span class="la-keyword">get</span> {
+            <span class="la-keyword">guard let</span> identifier: <span class="la-type">UUID</span> = <span class="la-call">associatedObject</span>(for: &amp;identifierKey) <span class="la-keyword">else</span> {
+                <span class="la-keyword">self</span>.<span class="la-property">identifier</span> = <span class="la-type">UUID</span>()
+                <span class="la-keyword">return self</span>.<span class="la-property">identifier</span>
+            }
+            <span class="la-keyword">return</span> identifier
+        }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;identifierKey) }
+    }
+    
+    <span class="la-keyword">private(set) var</span> children: [<span class="la-type">UUID</span>: <span class="la-type">Any</span>] {
+        <span class="la-keyword">get</span> {
+            <span class="la-keyword">guard let</span> children: [<span class="la-type">UUID</span>: <span class="la-type">Any</span>] = <span class="la-call">associatedObject</span>(for: &amp;childrenKey) <span class="la-keyword">else</span> {
+                <span class="la-keyword">self</span>.<span class="la-property">children</span> = [<span class="la-type">UUID</span>: <span class="la-type">Any</span>]()
+                <span class="la-keyword">return self</span>.<span class="la-property">children</span>
+            }
+            <span class="la-keyword">return</span> children
+        }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;childrenKey) }
+    }
+    
+    <span class="la-keyword">private func</span> store&lt;T: <span class="la-type">Coordinator</span>&gt;(child coordinator: <span class="la-type">T</span>) {
+        children[coordinator.<span class="la-property">identifier</span>] = coordinator
+    }
+    
+    <span class="la-keyword">private func</span> free&lt;T: <span class="la-type">Coordinator</span>&gt;(child coordinator: <span class="la-type">T</span>) {
+        children.<span class="la-call">removeValue</span>(forKey: coordinator.<span class="la-property">identifier</span>)
+    }
+    
+    <span class="la-keyword">private(set) weak var</span> parent: <span class="la-type">P</span>? {
+        <span class="la-keyword">get</span> { <span class="la-call">associatedObject</span>(for: &amp;parentKey) }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;parentKey, policy: .<span class="la-dotAccess">weak</span>) }
+    }
+    
+    <span class="la-keyword">func</span> coordinate&lt;T: <span class="la-type">Coordinator</span>&gt;(to coordinator: <span class="la-type">T</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        coordinator.<span class="la-property">parent</span> = <span class="la-keyword">self as</span>? <span class="la-type">T</span>.<span class="la-type">P</span>
+        <span class="la-keyword">return</span> coordinator.<span class="la-call">start</span>()
+    }
+}
+
+<span class="la-keyword">private var</span> identifierKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+<span class="la-keyword">private var</span> childrenKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+<span class="la-keyword">private var</span> parentKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+
+<span class="la-comment">// MARK: AppCoordinator</span>
+
+<span class="la-keyword">final class</span> AppCoordinator: <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">typealias</span> P = <span class="la-type">AppCoordinator</span> 
+  
+    {...}
+    
+    <span class="la-keyword">@discardableResult
+    func</span> start() -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> coordinator = <span class="la-type">RootMasterCoordinator</span>&lt;<span class="la-type">AppCoordinator</span>&gt;(window: window)
+        <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
+    }
+}
+
+<span class="la-comment">// MARK: MasterCoordinator</span>
+
+<span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
+
+<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span> {
+    <span class="la-keyword">func</span> presentDetailView(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> coordinator = <span class="la-type">NavigationDetailCoordinator</span>&lt;<span class="la-type">Self</span>&gt;(isPresented: isPresented)
+        <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
+    }
+}
+
+<span class="la-keyword">final class</span> RootMasterCoordinator&lt;P: <span class="la-type">Coordinator</span>&gt;: <span class="la-type">MasterCoordinator</span> {
+    {...}
+}
+
+<span class="la-comment">// MARK: DetailCoordinator</span>
+
+<span class="la-keyword">protocol</span> DetailCoordinator: <span class="la-type">Coordinator</span> {}
+
+<span class="la-keyword">final class</span> NavigationDetailCoordinator&lt;P: <span class="la-type">Coordinator</span>&gt;: <span class="la-type">DetailCoordinator</span> {
+    {...}
+}
+
+<span class="la-comment">// MARK: Factory</span>
+
+{...}
+
+<span class="la-comment">// MARK: MVP</span>
+
+{...}
+</code></pre><h2>2. 💾 Handling coordinator's children and memory management</h2><p>Now that we have all the properties we need in our <code>Coordinator</code> protocol, we have to manage how to actually add and remove the children of the coordinators.</p><p>Let's go to again to our <code>Coordinator</code> protocol to modify the <code>coordinate</code> function:</p><pre><code><span class="la-keyword">extension</span> <span class="la-type">Coordinator</span> {
+    {...}
+  
+    <span class="la-keyword">private func</span> store&lt;T: <span class="la-type">Coordinator</span>&gt;(child coordinator: <span class="la-type">T</span>) {
+        children[coordinator.<span class="la-property">identifier</span>] = coordinator
+    }
+    
+    <span class="la-keyword">func</span> coordinate&lt;T: <span class="la-type">Coordinator</span>&gt;(to coordinator: <span class="la-type">T</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-call">store</span>(child: coordinator) <span class="la-comment">// hi! I'm a new line</span>
+        coordinator.<span class="la-property">parent</span> = <span class="la-keyword">self as</span>? <span class="la-type">T</span>.<span class="la-type">P</span>
+        <span class="la-keyword">return</span> coordinator.<span class="la-call">start</span>()
+    }
+}
+</code></pre><p>We've added 1 line, a call to <code>store</code> to save the coordinator as a child.</p><p>Ok, but now we're retaining the coordinators we coordinatee to from here, and we are retaining the coordinators somewhere else too, in the presenters. We have to fix that!</p><p>Let's go to the presenter and make sure we don't have 2 strong references to the same object:</p><pre><code><span class="la-keyword">final class</span> MasterPresenter&lt;C: <span class="la-type">MasterCoordinator</span>&gt;: <span class="la-type">MasterPresenting</span> {
+    <span class="la-keyword">private(set) weak var</span> coordinator: <span class="la-type">C</span>?
+    
+    {...}
+}
+</code></pre><p>We switched our <code>coordinator</code> property from <code>private let</code> to <code>private(set) weak var</code>, so we have a weak reference to the coordinator from our presenter and a strong refence to the coordinator from its parent (in <code>children</code> ).</p><p>Neat! We just avoided a bullet (aka retain cycle).</p><p>Now we need a way to free that memory whenever we have to release the coordinator, and we're going to implement another function usually found in the coordinator pattern, <code>stop</code>.</p><p>Let's go back to <code>Coordinator</code>:</p><pre><code><span class="la-keyword">extension</span> <span class="la-type">Coordinator</span> {
+    {...}
+  
+    <span class="la-keyword">private func</span> free&lt;T: <span class="la-type">Coordinator</span>&gt;(child coordinator: <span class="la-type">T</span>) {
+        children.<span class="la-call">removeValue</span>(forKey: coordinator.<span class="la-property">identifier</span>)
+    }
+    
+    <span class="la-keyword">func</span> stop() {
+        children.<span class="la-call">removeAll</span>()
+        parent?.<span class="la-call">free</span>(child: <span class="la-keyword">self</span>)
+    }
+}
+</code></pre><p>With the <code>stop</code> function we remove all the children, and with <code>free</code>, we ask the parent to remove this child.</p><p>We have everything in place, now we just have to see where we're going to call this <code>stop</code> function. But we have a problem, SwiftUI is not like UIKit, we do not have delegate methods to know when a view was released, like <code>UINavigationControllerDelegate</code>.</p><p>So instead of waiting for the view to notify the coordinator it dissappeared, we're going to rely on the presenter to know when we have to release a coordinator:</p><pre><code><span class="la-keyword">final class</span> MasterPresenter&lt;C: <span class="la-type">MasterCoordinator</span>&gt;: <span class="la-type">MasterPresenting</span> {
+    {...}
+  
+  	<span class="la-keyword">deinit</span> {
+        coordinator?.<span class="la-call">stop</span>()
+    }
+  
+  	{...}
+}
+</code></pre><p>Whenever SwiftUI decides to drop the view and it's linked presenter, we're going to tell its coordinator to also release itself.</p><p>Great! Looks good but... sadly, I have a but. There's another problem, do you think we're going to remember to call <code>coordinator?.stop()</code> on the <code>deinit</code> of every presenter we create? Exactly, me neither.</p><p>So we have 2 ways to solve this, one it's to add a rule to our linter (like <a href="https://github.com/realm/SwiftLint">SwiftLint</a>) to alert us whenever it doesn't find the call to <code>stop</code> in the presenter's <code>deinit</code>. Another solution is to create a base presenter class and make all the presenters inherit from that one.</p><p>In my case, I choose the 2nd one:</p><pre><code><span class="la-keyword">class</span> Presenter&lt;C: <span class="la-type">Coordinator</span>&gt; {
+    <span class="la-keyword">private(set) weak var</span> coordinator: <span class="la-type">C</span>?
+    
+    <span class="la-keyword">init</span>(coordinator: <span class="la-type">C</span>) {
+        <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+    }
+    
+    <span class="la-keyword">deinit</span> {
+        coordinator?.<span class="la-call">stop</span>()
+    }
+}
+
+<span class="la-keyword">final class</span> MasterPresenter&lt;C: <span class="la-type">MasterCoordinator</span>&gt;: <span class="la-type">Presenter</span>&lt;<span class="la-type">C</span>&gt;, <span class="la-type">MasterPresenting</span> {
+    <span class="la-keyword">@Published private(set) var</span> viewModel: <span class="la-type">MasterViewModel</span>
+    
+    <span class="la-keyword">override init</span>(coordinator: <span class="la-type">C</span>) {
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
+        <span class="la-keyword">super</span>.<span class="la-keyword">init</span>(coordinator: coordinator)
+    }
+    
+    <span class="la-keyword">func</span> onButtonPressed(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">return</span> coordinator?.<span class="la-call">presentDetailView</span>(isPresented: isPresented)
+    }
+}
+</code></pre><p>We created a new <code>Presenter</code> base class, from which all our presenters will inherit now. As you can see, <code>MasterPresenter</code> is now a subclass, and we don't have to worry about the coordinator not being released anymore.</p><p><strong>Perfect! Now all the puzzle it's completed!</strong> We added helper functions to <code>Coordinator</code> to manage adding and removing children, we implemented the <code>stop</code> method to release the coordinator. We learned how to avoid a retain cycle. And we created a new presenter base class to deal with the coordinator lifecycle.</p><p>As I said before, I prefer composition over inheritance, but <strong>you have to choose the option that fits better your needs</strong>, in programming there no silver bullets, so be open to everything!</p><p>This is all what we've done in these 2 parts:</p><pre><code><span class="la-comment">// You can put this in a playground and run it!</span>
+
+<span class="la-keyword">import</span> SwiftUI
+
+<span class="la-keyword">protocol</span> Coordinator: <span class="la-type">AssociatedObject</span> {
+    <span class="la-keyword">associatedtype</span> U: <span class="la-type">View</span>
+    <span class="la-keyword">associatedtype</span> P: <span class="la-type">Coordinator</span>
+    <span class="la-keyword">func</span> start() -&gt; <span class="la-type">U</span>
+    <span class="la-keyword">func</span> stop()
+}
+
+<span class="la-keyword">extension</span> <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">private(set) var</span> identifier: <span class="la-type">UUID</span> {
+        <span class="la-keyword">get</span> {
+            <span class="la-keyword">guard let</span> identifier: <span class="la-type">UUID</span> = <span class="la-call">associatedObject</span>(for: &amp;identifierKey) <span class="la-keyword">else</span> {
+                <span class="la-keyword">self</span>.<span class="la-property">identifier</span> = <span class="la-type">UUID</span>()
+                <span class="la-keyword">return self</span>.<span class="la-property">identifier</span>
+            }
+            <span class="la-keyword">return</span> identifier
+        }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;identifierKey) }
+    }
+    
+    <span class="la-keyword">private(set) var</span> children: [<span class="la-type">UUID</span>: <span class="la-type">Any</span>] {
+        <span class="la-keyword">get</span> {
+            <span class="la-keyword">guard let</span> children: [<span class="la-type">UUID</span>: <span class="la-type">Any</span>] = <span class="la-call">associatedObject</span>(for: &amp;childrenKey) <span class="la-keyword">else</span> {
+                <span class="la-keyword">self</span>.<span class="la-property">children</span> = [<span class="la-type">UUID</span>: <span class="la-type">Any</span>]()
+                <span class="la-keyword">return self</span>.<span class="la-property">children</span>
+            }
+            <span class="la-keyword">return</span> children
+        }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;childrenKey) }
+    }
+    
+    <span class="la-keyword">private func</span> store&lt;T: <span class="la-type">Coordinator</span>&gt;(child coordinator: <span class="la-type">T</span>) {
+        children[coordinator.<span class="la-property">identifier</span>] = coordinator
+    }
+    
+    <span class="la-keyword">private func</span> free&lt;T: <span class="la-type">Coordinator</span>&gt;(child coordinator: <span class="la-type">T</span>) {
+        children.<span class="la-call">removeValue</span>(forKey: coordinator.<span class="la-property">identifier</span>)
+    }
+    
+    <span class="la-keyword">private(set) weak var</span> parent: <span class="la-type">P</span>? {
+        <span class="la-keyword">get</span> { <span class="la-call">associatedObject</span>(for: &amp;parentKey) }
+        <span class="la-keyword">set</span> { <span class="la-call">setAssociatedObject</span>(newValue, for: &amp;parentKey, policy: .<span class="la-dotAccess">weak</span>) }
+    }
+    
+    <span class="la-keyword">func</span> coordinate&lt;T: <span class="la-type">Coordinator</span>&gt;(to coordinator: <span class="la-type">T</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-call">store</span>(child: coordinator)
+        coordinator.<span class="la-property">parent</span> = <span class="la-keyword">self as</span>? <span class="la-type">T</span>.<span class="la-type">P</span>
+        <span class="la-keyword">return</span> coordinator.<span class="la-call">start</span>()
+    }
+    
+    <span class="la-keyword">func</span> stop() {
+        children.<span class="la-call">removeAll</span>()
+        parent?.<span class="la-call">free</span>(child: <span class="la-keyword">self</span>)
+    }
+}
+
+<span class="la-keyword">private var</span> identifierKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+<span class="la-keyword">private var</span> childrenKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+<span class="la-keyword">private var</span> parentKey: <span class="la-type">UInt8</span> = <span class="la-number">0</span>
+
+<span class="la-comment">// MARK: AppCoordinator</span>
+
+<span class="la-keyword">final class</span> AppCoordinator: <span class="la-type">Coordinator</span> {
+    <span class="la-keyword">typealias</span> P = <span class="la-type">AppCoordinator</span>
+    
+    <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
+    
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
+        <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
+    }
+    
+    <span class="la-keyword">@discardableResult
+    func</span> start() -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> coordinator = <span class="la-type">RootMasterCoordinator</span>&lt;<span class="la-type">AppCoordinator</span>&gt;(window: window)
+        <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
+    }
+}
+
+<span class="la-comment">// MARK: MasterCoordinator</span>
+
+<span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
+
+<span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span> {
+    <span class="la-keyword">func</span> presentDetailView(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> coordinator = <span class="la-type">NavigationDetailCoordinator</span>&lt;<span class="la-type">Self</span>&gt;(isPresented: isPresented)
+        <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
+    }
+}
+
+<span class="la-keyword">final class</span> RootMasterCoordinator&lt;P: <span class="la-type">Coordinator</span>&gt;: <span class="la-type">MasterCoordinator</span> {
+    <span class="la-keyword">private weak var</span> window: <span class="la-type">UIWindow</span>?
+    
+    <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>?) {
+        <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
+    }
+    
+    <span class="la-keyword">func</span> start() -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> view = <span class="la-type">MasterFactory</span>.<span class="la-call">make</span>(with: <span class="la-keyword">self</span>)
+        <span class="la-keyword">let</span> navigation = <span class="la-type">NavigationView</span> { view }
+        <span class="la-keyword">let</span> hosting = <span class="la-type">UIHostingController</span>(rootView: navigation)
+        window?.<span class="la-property">rootViewController</span> = hosting
+        window?.<span class="la-call">makeKeyAndVisible</span>()
+        <span class="la-keyword">return</span> <span class="la-type">EmptyView</span>()
+    }
+}
+
+<span class="la-comment">// MARK: DetailCoordinator</span>
+
+<span class="la-keyword">protocol</span> DetailCoordinator: <span class="la-type">Coordinator</span> {}
+
+<span class="la-keyword">final class</span> NavigationDetailCoordinator&lt;P: <span class="la-type">Coordinator</span>&gt;: <span class="la-type">DetailCoordinator</span> {
+    <span class="la-keyword">private var</span> isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;
+    
+    <span class="la-keyword">init</span>(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) {
+        <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = isPresented
+    }
+    
+    <span class="la-keyword">func</span> start() -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">return</span> <span class="la-type">NavigationLink</span>(destination: <span class="la-type">EmptyView</span>(), isActive: isPresented) {
+            <span class="la-type">EmptyView</span>()
+        }
+    }
+}
+
+<span class="la-comment">// MARK: Factory</span>
+
+<span class="la-keyword">enum</span> MasterFactory {
+    <span class="la-keyword">static func</span> make&lt;C: <span class="la-type">MasterCoordinator</span>&gt;(with coordinator: <span class="la-type">C</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">let</span> presenter = <span class="la-type">MasterPresenter</span>(coordinator: coordinator)
+        <span class="la-keyword">let</span> view = <span class="la-type">MasterView</span>(presenter: presenter)
+        <span class="la-keyword">return</span> view
+    }
+}
+
+<span class="la-comment">// MARK: Presenter</span>
+
+<span class="la-keyword">class</span> Presenter&lt;C: <span class="la-type">Coordinator</span>&gt; {
+    <span class="la-keyword">private(set) weak var</span> coordinator: <span class="la-type">C</span>?
+    
+    <span class="la-keyword">init</span>(coordinator: <span class="la-type">C</span>) {
+        <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+    }
+    
+    <span class="la-keyword">deinit</span> {
+        coordinator?.<span class="la-call">stop</span>()
+    }
+}
+
+<span class="la-comment">// MARK: MVP</span>
+
+<span class="la-keyword">struct</span> MasterViewModel {
+    <span class="la-keyword">let</span> date: <span class="la-type">Date</span>
+}
+
+<span class="la-keyword">protocol</span> MasterPresenting: <span class="la-type">ObservableObject</span> {
+    <span class="la-keyword">associatedtype</span> U: <span class="la-type">View</span>
+    <span class="la-keyword">var</span> viewModel: <span class="la-type">MasterViewModel</span> { <span class="la-keyword">get</span> }
+    <span class="la-keyword">func</span> onButtonPressed(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-type">U</span>
+}
+
+<span class="la-keyword">final class</span> MasterPresenter&lt;C: <span class="la-type">MasterCoordinator</span>&gt;: <span class="la-type">Presenter</span>&lt;<span class="la-type">C</span>&gt;, <span class="la-type">MasterPresenting</span> {
+    <span class="la-keyword">@Published private(set) var</span> viewModel: <span class="la-type">MasterViewModel</span>
+    
+    <span class="la-keyword">override init</span>(coordinator: <span class="la-type">C</span>) {
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
+        <span class="la-keyword">super</span>.<span class="la-keyword">init</span>(coordinator: coordinator)
+    }
+    
+    <span class="la-keyword">func</span> onButtonPressed(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-keyword">return</span> coordinator?.<span class="la-call">presentDetailView</span>(isPresented: isPresented)
+    }
+}
+
+<span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
+    
+    <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>),
+                         navigationView: { isPresented <span class="la-keyword">in
+                            self</span>.<span class="la-property">presenter</span>.<span class="la-call">onButtonPressed</span>(isPresented: isPresented)
+        })
+    }
+}
+
+<span class="la-comment">// MARK: Helpers</span>
+
+<span class="la-keyword">struct</span> NavigationButton&lt;CV: <span class="la-type">View</span>, NV: <span class="la-type">View</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@State private var</span> isPresented = <span class="la-keyword">false
+    
+    var</span> contentView: <span class="la-type">CV</span>
+    <span class="la-keyword">var</span> navigationView: (<span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-type">NV</span>
+    
+    <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
+        <span class="la-type">Button</span>(action: {
+            <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = <span class="la-keyword">true</span>
+        }) {
+            contentView
+                .<span class="la-call">background</span>(
+                    <span class="la-call">navigationView</span>($isPresented)
+            )
+        }
+    }
+}
+
+<span class="la-keyword">let</span> dateFormatter: <span class="la-type">DateFormatter</span> = {
+    <span class="la-keyword">let</span> dateFormatter = <span class="la-type">DateFormatter</span>()
+    dateFormatter.<span class="la-property">dateStyle</span> = .<span class="la-dotAccess">medium</span>
+    dateFormatter.<span class="la-property">timeStyle</span> = .<span class="la-dotAccess">medium</span>
+    <span class="la-keyword">return</span> dateFormatter
+}()
+
+<span class="la-keyword">protocol</span> AssociatedObject: <span class="la-keyword">class</span> {
+    <span class="la-keyword">func</span> associatedObject&lt;T&gt;(for key: <span class="la-type">UnsafeRawPointer</span>) -&gt; <span class="la-type">T</span>?
+    <span class="la-keyword">func</span> setAssociatedObject&lt;T&gt;(
+        <span class="la-keyword">_</span> object: <span class="la-type">T</span>,
+        for key: <span class="la-type">UnsafeRawPointer</span>,
+        policy: <span class="la-type">AssociationPolicy</span>
+    )
+}
+<span class="la-keyword">extension</span> <span class="la-type">AssociatedObject</span> {
+    <span class="la-keyword">func</span> associatedObject&lt;T&gt;(for key: <span class="la-type">UnsafeRawPointer</span>) -&gt; <span class="la-type">T</span>? {
+        <span class="la-keyword">return</span> <span class="la-call">objc_getAssociatedObject</span>(<span class="la-keyword">self</span>, key) <span class="la-keyword">as</span>? <span class="la-type">T</span>
+    }
+    
+    <span class="la-keyword">func</span> setAssociatedObject&lt;T&gt;(
+        <span class="la-keyword">_</span> object: <span class="la-type">T</span>,
+        for key: <span class="la-type">UnsafeRawPointer</span>,
+        policy: <span class="la-type">AssociationPolicy</span> = .<span class="la-dotAccess">strong</span>
+    ) {
+        <span class="la-keyword">return</span> <span class="la-call">objc_setAssociatedObject</span>(
+            <span class="la-keyword">self</span>,
+            key,
+            object,
+            policy.<span class="la-property">objcPolicy</span>
+        )
+    }
+}
+<span class="la-keyword">enum</span> AssociationPolicy {
+    <span class="la-keyword">case</span> strong
+    <span class="la-keyword">case</span> copy
+    <span class="la-keyword">case weak
+    
+    var</span> objcPolicy: <span class="la-call">objc_AssociationPolicy</span> {
+        <span class="la-keyword">switch self</span> {
+            <span class="la-keyword">case</span> .<span class="la-dotAccess">strong</span>:
+                <span class="la-keyword">return</span> .<span class="la-dotAccess">OBJC_ASSOCIATION_RETAIN_NONATOMIC</span>
+            <span class="la-keyword">case</span> .<span class="la-dotAccess">copy</span>:
+                <span class="la-keyword">return</span> .<span class="la-dotAccess">OBJC_ASSOCIATION_COPY_NONATOMIC</span>
+            <span class="la-keyword">case</span> .<span class="la-dotAccess">weak</span>:
+                <span class="la-keyword">return</span> .<span class="la-dotAccess">OBJC_ASSOCIATION_ASSIGN</span>
+        }
+    }
+}
+</code></pre><h2>🏁 Conclusion</h2><p>We have learned how to implement stored properies in protocol extensions creating a mixin, using the power of the Objective-C runtime. We added helper functions to <code>Coordinator</code> to manage adding and removing children, we implemented the <code>stop</code> method to release the coordinator. We learned how to avoid a retain cycle. And we created a new presenter base class to deal with the coordinator lifecycle.</p><p>That's it! <strong>We've completed part 3 of this series.</strong> Now I invite you to <a href="https://github.com/Lascorbe/SwiftUI-MVP-Coordinator">take a look at whole project I created</a>, where the final implementation is, with more classes and examples, and both ways of navigating, navigation stack and modals. There you can also take a look at <code>AssociatedObject.swift</code> and see how we can create stored properties under the hood.</p><p>We've finished our experimental MVP+Coordinators SwiftUI project, but <strong>there're still a few considerations I wonder about</strong>:</p><ul><li>I didn't implement a way to navigate back from a coordinator, but there should be one. How should it work then?</li><li>A great challenge is the deeplinking, how would it work in this implementation?</li><li>What about animations? Right now, it's not possible to modify the animation/transition of <code>NavigationLink</code> nor <code>.sheet</code>. Hopefully, Apple will make that possible in the next SwiftUI version.</li><li>Is this a good approach? Or the declarative nature of SwiftUI pushes us to use other design patterns/architectures, like redux?</li></ul><p>All of them good candidates for an upcoming post 😏. I'll try to explore them but I can't promise anything, I dedicated a lot of time to these 3 blog posts and I can tell you writing is A LOT of work. So if you really like a writer/blogger, tell them! I'm sure they'll appreciate it immensely.</p><p>Last but not least, I'd like to give a big thank you to my friends <a href="https://twitter.com/icanzilb">Marin Todorov</a> and <a href="https://twitter.com/terhechte">Benedikt Terhechte</a> for giving me early feedback about these blog posts 🙇🏻‍♂️, you're the best! 🤗</p><p><strong>I hope you liked these <a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">part 1</a>, <a href="https://lascorbe.com/posts/2020-04-28-MVPCoordinators-SwiftUI-part2">part 2</a> and <a href="https://lascorbe.com/posts/2020-04-29-MVPCoordinators-SwiftUI-part3">part 3</a> posts covering my experience trying to decouple the navigation in SwftUI</strong>.</p><p>Thank you for reading. Let me know what you think and share it with your friends!</p><p>Luis.</p></div></div><div class="post-description"><div class="pure-u-md-1-1"><a href="https://twitter.com/intent/tweet?via=lascorbe&text=MVP%20+%20Coordinators%20in%20SwiftUI%20(part%203)&url=https://lascorbe.com/posts/2020-04-29-MVPCoordinators-SwiftUI-part3" target="_blank"><i class="fab fa-twitter l-box social-icon"></i>Share this post on Twitter.</a></div></div></div><div class="footer pure-u-1"><div class="pure-u-1">© 2020 Luis Ascorbe</div><div class="pure-u-1">Generated using <a href="https://github.com/johnsundell/publish" target="_blank">Publish</a>. 100% JavaScript-free.</div><div class="pure-u-1"><a href="/feed.rss">RSS</a> | <a href="/about">About</a></div></div></div></body></html>
