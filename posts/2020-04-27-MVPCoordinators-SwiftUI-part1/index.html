@@ -11,16 +11,21 @@
 }
 
 <span class="la-keyword">final class</span> MasterPresenter: <span class="la-type">MasterPresenting</span> {
-    <span class="la-keyword">@Published private(set) var</span> viewModel: <span class="la-type">MasterViewModel</span>
+    <span class="la-keyword">@Published private(set) var</span> viewModel = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
 }
 </code></pre><p>Yes, we're doing protocols all the way. This is going to be a small app, but let's treat it as if it was a big one. We declare the protocol of the presenter, so we can inject it in our view, which will make things like testing easier.</p><p>Using the power of Combine, we declared the protocol conformance to <code>ObservableObject</code>. Now we can observe the <code>@Published</code> properties from the view.</p><p>Let's change our view to adopt this presenter protocol:</p><pre><code><span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
     <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span> <span class="la-comment">// check out @ObservedObject</span>
   
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
-        <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)
+        <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)
     }
 }
-</code></pre><p>To bind this view to the presenter we need the <code>@ObservedObject</code> property wrapper. <code>dateFormatter</code> is just a global <code>DateFormatter</code> defined somewhere else. Now our view is "listening" for whenever our <code>viewModel</code> changes!</p><p>We've completed the MVP part of our first screen. <strong>In the next section we're going to define our base Coordinator type and define our first 2 coordinators</strong>.</p><p>This is what we've done so far:</p><pre><code><span class="la-keyword">struct</span> MasterViewModel {
+</code></pre><p>To bind this view to the presenter we need the <code>@ObservedObject</code> property wrapper. <code>dateFormatter</code> is just a global <code>DateFormatter</code> defined somewhere else. Now our view is "listening" for whenever our <code>viewModel</code> changes!</p><p>But since <code>MasterPresenting</code> is conforming to <code>ObservableObject</code>, it is a generic protocol. So we have to tell that to the view:</p><pre><code><span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> { <span class="la-comment">// hi there T!</span>
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
+  
+    {...}
+}
+</code></pre><p>We still don't want <code>MasterView</code> to know what <code>MasterPresenting</code> we are injecting, so let's keep using the <code>MasterPresenting</code> protocol, this time as a generic one (<code>&lt;T: MasterPresenting&gt;</code>).</p><p>We've completed the MVP part of our first screen. <strong>In the next section we're going to define our base Coordinator type and define our first 2 coordinators</strong>.</p><p>This is what we've done so far:</p><pre><code><span class="la-keyword">struct</span> MasterViewModel {
     <span class="la-keyword">let</span> date: <span class="la-type">Date</span>
 }
 
@@ -29,14 +34,14 @@
 }
 
 <span class="la-keyword">final class</span> MasterPresenter: <span class="la-type">MasterPresenting</span> {
-    <span class="la-keyword">@Published private(set) var</span> viewModel: <span class="la-type">MasterViewModel</span>
+    <span class="la-keyword">@Published private(set) var</span> viewModel = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
 }
 
-<span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
+<span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
   
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
-        <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)
+        <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)
     }
 }
 </code></pre><h2>2. 🧭 Creating Coordinators</h2><p>With our MVP in place, now we are going to create protocols and implementations for coordinators. So how does our base Coordinator look like?</p><pre><code><span class="la-keyword">protocol</span> Coordinator {
@@ -90,7 +95,7 @@
     }
 }
 </code></pre><p>Here we just take the window and present the <code>rootViewController</code> (<code>UIHostingController</code> is what you need to bring SwiftUI Views to UIKit). The <code>AppCoordinator</code> and the <code>RootMasterCoordinator</code> are the only 2 coordinators where we need UIKit, maybe in <em>June</em> we get a new <code>UISceneDelegate</code>/<code>UIApplicationDelegate</code> API?</p><p>Cool! Coordinators are working via <code>AppCoordinator</code> and <code>RootMasterCoordinator</code>.</p><p>There's an interesting line in <code>RootMasterCoordinator</code>, what's behind that <code>MasterFactory</code>? As you can guess, a factory:</p><pre><code><span class="la-keyword">enum</span> MasterFactory {
-    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">Coordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">MasterCoordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-keyword">let</span> presenter = <span class="la-type">MasterPresenter</span>(coordinator: coordinator)
         <span class="la-keyword">let</span> view = <span class="la-type">MasterView</span>(presenter: presenter)
         <span class="la-keyword">return</span> view
@@ -103,7 +108,8 @@
     
     <span class="la-keyword">init</span>(coordinator: <span class="la-type">MasterCoordinator</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
-        <span class="la-comment">// You may want to bind your viewModel to a service/DB here, maybe using Combine/RxSwift</span>
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
+        <span class="la-comment">// You may want to bind your ViewModel to a service/DB here, maybe using Combine/RxSwift</span>
     }
 }
 </code></pre><p>As you can see, we inject the coordinator through the init as we did with the window in the coordinator. Then you may want to bind your model/entity here. I tried using <code>onAppear</code> on <code>MasterView</code> and report it back to the presenter as a way to bind the ViewModel, but it works as a <code>viewDidAppear</code> not like a <code>viewDidLoad</code>.</p><p>We've learned how to link everything together, the MVP with the coordinators, now we have the base structure of the UI. <strong>In the next section we'll see how we can navigate to a view.</strong></p><p>This is what we've done so far:</p><pre><code><span class="la-comment">// MARK: Coordinator</span>
@@ -155,7 +161,7 @@
 <span class="la-comment">// MARK: Factory</span>
 
 <span class="la-keyword">enum</span> MasterFactory {
-    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">Coordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">MasterCoordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-keyword">let</span> presenter = <span class="la-type">MasterPresenter</span>(coordinator: coordinator)
         <span class="la-keyword">let</span> view = <span class="la-type">MasterView</span>(presenter: presenter)
         <span class="la-keyword">return</span> view
@@ -179,23 +185,24 @@
     
     <span class="la-keyword">init</span>(coordinator: <span class="la-type">MasterCoordinator</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
     }
 }
 
-<span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
+<span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
   
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
-        <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)
+        <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)
     }
 }
-</code></pre><h2>3. 🗺 Navigating to another view</h2><p>Now that we have our MVP and Coordinators in place, let's go to <code>MasterView</code> and see how we can navigate to another view with <code>NavigationLink</code>:</p><pre><code><span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
+</code></pre><h2>3. 🗺 Navigating to another view</h2><p>Now that we have our MVP and Coordinators in place, let's go to <code>MasterView</code> and see how we can navigate to another view with <code>NavigationLink</code>:</p><pre><code><span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
   
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-type">NavigationView</span> {
             <span class="la-type">NavigationLink</span>(destination: <span class="la-type">EmptyView</span>()) {
-                <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)  
+                <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)  
             }
         }
     }
@@ -216,27 +223,27 @@
     }
 }
 
-<span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
+<span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
   
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-comment">// NavigationView is no longer here</span>
         <span class="la-type">NavigationLink</span>(destination: <span class="la-type">EmptyView</span>()) {
-            <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)  
+            <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)  
         }
     }
 }
-</code></pre><p>Better. Next, we're going to move <code>NavigationLink</code> out too. It should be a function we can call on the presenter, something like:</p><pre><code><span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
+</code></pre><p>Better. Next, we're going to move <code>NavigationLink</code> out too. It should be a function we can call on the presenter, something like:</p><pre><code><span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
   
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
         presenter.<span class="la-call">presentSuperAmazingView</span> {
-            <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)  
+            <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)  
         }
     }
 }
-</code></pre><p>But there're 2 problems here. One, it's hard to understand what <code>presentSuperAmazingView</code> does, does it make <code>Text</code> a button? will it push the view? Second, we're working with <code>NavigationLink</code>, but what happens if we want to present a modal?</p><p>The way to present a modal is with a view modifier called <code>.sheet</code>. That's right, to push a view we have a View struct, <code>NavigationView</code>, and to present a modal we have a modifier, <code>.sheet</code>. If there's something I truly want to avoid is the lack of consistency. Maybe I'm too dumb to understand why it's been done like this, but I'm my humble opinion they both should work the same way (and I don't care if it's with structs or modifiers, or both, but use the same thing). So please, please 🙏🏻, if you're an Apple Engineer working in SwiftUI reading this, for the sake of consistency, expose them both the same way, thank you.</p><p>Anyway, how can we avoid this nicely? The best way I found is <a href="https://stackoverflow.com/a/61188788/736384">using a <code>.background</code> view inside a Button's content</a>. It's better to see it in code, so now our <code>MasterView</code> looks like this:</p><pre><code><span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
+</code></pre><p>But there're 2 problems here. One, it's hard to understand what <code>presentSuperAmazingView</code> does, does it make <code>Text</code> a button? will it push the view? Second, we're working with <code>NavigationLink</code>, but what happens if we want to present a modal?</p><p>The way to present a modal is with a view modifier called <code>.sheet</code>. That's right, to push a view we have a View struct, <code>NavigationView</code>, and to present a modal we have a modifier, <code>.sheet</code>. If there's something I truly want to avoid is the lack of consistency. Maybe I'm too dumb to understand why it's been done like this, but I'm my humble opinion they both should work the same way (and I don't care if it's with structs or modifiers, or both, but use the same thing). So please, please 🙏🏻, if you're an Apple Engineer working in SwiftUI reading this, for the sake of consistency, expose them both the same way, thank you.</p><p>Anyway, how can we avoid this nicely? The best way I found is <a href="https://stackoverflow.com/a/61188788/736384">using a <code>.background</code> view inside a Button's content</a>. It's better to see it in code, so now our <code>MasterView</code> looks like this:</p><pre><code><span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
   
     <span class="la-keyword">@State private var</span> isPresented = <span class="la-keyword">false
   
@@ -244,7 +251,7 @@
         <span class="la-type">Button</span>(action: {
             <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = <span class="la-keyword">true</span>
         }) {
-            <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) 
+            <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) 
                 .<span class="la-call">background</span>(
                     <span class="la-comment">// this is the cool part</span>
                     <span class="la-type">NavigationLink</span>(destination: <span class="la-type">EmptyView</span>(), isActive: $isPresented) {
@@ -274,7 +281,7 @@
     <span class="la-keyword">init</span>(window: <span class="la-type">UIWindow</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">window</span> = window
     }
-  
+    
     <span class="la-keyword">func</span> start() {
         <span class="la-keyword">let</span> coordinator = <span class="la-type">RootMasterCoordinator</span>(window: window)
         <span class="la-call">coordinate</span>(to: coordinator)
@@ -304,7 +311,7 @@
 <span class="la-comment">// MARK: Factory</span>
 
 <span class="la-keyword">enum</span> MasterFactory {
-    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">Coordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">MasterCoordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-keyword">let</span> presenter = <span class="la-type">MasterPresenter</span>(coordinator: coordinator)
         <span class="la-keyword">let</span> view = <span class="la-type">MasterView</span>(presenter: presenter)
         <span class="la-keyword">return</span> view
@@ -328,25 +335,25 @@
     
     <span class="la-keyword">init</span>(coordinator: <span class="la-type">MasterCoordinator</span>) {
         <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+        <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
     }
 }
 
-<span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
-  
+<span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
+    
     <span class="la-keyword">@State private var</span> isPresented = <span class="la-keyword">false
-  
+    
     var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-type">Button</span>(action: {
             <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = <span class="la-keyword">true</span>
         }) {
-            <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) 
+            <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>)
                 .<span class="la-call">background</span>(
-                    <span class="la-comment">// this is the cool part</span>
                     <span class="la-type">NavigationLink</span>(destination: <span class="la-type">EmptyView</span>(), isActive: $isPresented) {
                         <span class="la-type">EmptyView</span>()
                     }
-                )
+            )
         }
     }
 }

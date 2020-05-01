@@ -48,7 +48,7 @@
 <span class="la-comment">// MARK: Factory</span>
 
 <span class="la-keyword">enum</span> MasterFactory {
-    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">Coordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">MasterCoordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-keyword">let</span> presenter = <span class="la-type">MasterPresenter</span>(coordinator: coordinator)
         <span class="la-keyword">let</span> view = <span class="la-type">MasterView</span>(presenter: presenter)
         <span class="la-keyword">return</span> view
@@ -76,8 +76,8 @@
     }
 }
 
-<span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
+<span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
   
     <span class="la-keyword">@State private var</span> isPresented = <span class="la-keyword">false
   
@@ -85,7 +85,7 @@
         <span class="la-type">Button</span>(action: {
             <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = <span class="la-keyword">true</span>
         }) {
-            <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) 
+            <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) 
                 .<span class="la-call">background</span>(
                     <span class="la-comment">// this is the cool part</span>
                     <span class="la-type">NavigationLink</span>(destination: <span class="la-type">EmptyView</span>(), isActive: $isPresented) {
@@ -95,8 +95,8 @@
         }
     }
 }
-</code></pre><h2>1. 🥊 Extracting <code>NavigationLink</code></h2><p>The last thing we did in <em><a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">part 1</a></em> was moving <code>NavigationView</code> out of the <code>MasterView</code> and "hidding" <code>NavigationLink</code> as the background view of the Button's text:</p><pre><code><span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
+</code></pre><h2>1. 🥊 Extracting <code>NavigationLink</code></h2><p>The last thing we did in <em><a href="https://lascorbe.com/posts/2020-04-27-MVPCoordinators-SwiftUI-part1">part 1</a></em> was moving <code>NavigationView</code> out of the <code>MasterView</code> and "hidding" <code>NavigationLink</code> as the background view of the Button's text:</p><pre><code><span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
   
     <span class="la-keyword">@State private var</span> isPresented = <span class="la-keyword">false
   
@@ -104,7 +104,7 @@
         <span class="la-type">Button</span>(action: {
             <span class="la-keyword">self</span>.<span class="la-property">isPresented</span> = <span class="la-keyword">true</span>
         }) {
-            <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) 
+            <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) 
                 .<span class="la-call">background</span>(
                     <span class="la-type">NavigationLink</span>(destination: <span class="la-type">EmptyView</span>(), isActive: $isPresented) {
                         <span class="la-type">EmptyView</span>()
@@ -130,11 +130,11 @@
         }
     }
 }
-</code></pre><p>Our new <code>NavigationButton</code> accepts one view, to present it as the button's content, and one constructor, a closure, for the navigation view. We have to use a closure so we can pass <code>isPresented</code> back and bind it.</p><p>This is how our <code>MasterView</code> looks now:</p><pre><code><span class="la-keyword">struct</span> MasterView: <span class="la-type">View</span> {
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">MasterPresenting</span>
+</code></pre><p>Our new <code>NavigationButton</code> accepts one view, to present it as the button's content, and one constructor, a closure, for the navigation view. We have to use a closure so we can pass <code>isPresented</code> back and bind it.</p><p>This is how our <code>MasterView</code> looks now:</p><pre><code><span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> {
+    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
   
     <span class="la-keyword">var</span> body: <span class="la-keyword">some</span> <span class="la-type">View</span> {
-        <span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) ,
+        <span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) ,
                          navigationView: { isPresented <span class="la-keyword">in</span>
                              <span class="la-type">NavigationLink</span>(destination: <span class="la-type">EmptyView</span>(), isActive: $isPresented) {
                                  <span class="la-type">EmptyView</span>()
@@ -142,7 +142,7 @@
         })
     }
 }
-</code></pre><p>We switched the <code>Button</code> that was there before with our newly created <code>NavigationButton</code>. Notice that now we don't have to have a property to store <code>isPresented</code> because that's now handled by <code>NavigationButton</code>.</p><p>Now we can extract <code>NavigationLink</code>! Let's define what we really would like to have in the button in <code>MasterView</code>:</p><pre><code><span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(viewModel.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) ,
+</code></pre><p>We switched the <code>Button</code> that was there before with our newly created <code>NavigationButton</code>. Notice that now we don't have to have a property to store <code>isPresented</code> because that's now handled by <code>NavigationButton</code>.</p><p>Now we can extract <code>NavigationLink</code>! Let's define what we really would like to have in the button in <code>MasterView</code>:</p><pre><code><span class="la-type">NavigationButton</span>(contentView: <span class="la-type">Text</span>(<span class="la-string">"</span>\(presenter.<span class="la-property">viewModel</span>.<span class="la-property">date</span>, formatter: dateFormatter)<span class="la-string">"</span>) ,
                  navigationView: { isPresented <span class="la-keyword">in
                      self</span>.<span class="la-property">presenter</span>.<span class="la-call">onButtonPressed</span>(isPresented: $isPresented)
 })
@@ -167,12 +167,7 @@
         <span class="la-keyword">return</span> coordinator.<span class="la-call">presentDetailView</span>(isPresented: isPresented)
     }
 }
-</code></pre><p>We have to return a SwiftUI View, which can only be used as a generic constraint, so we need to add an <code>associatedtype</code> in our <code>MasterPresenting</code> protocol. Notice how with the <code>some</code> keyword in <code>MasterPresenter</code> we don't have to specify the <code>associatedtype</code>.</p><p>Also, take a look at <code>coordinator.presentDetailView(:)</code>, it's returning a View.</p><p>We're going there next but first, we have to modify our <code>MasterView</code>, because is using a generic protocol now:</p><pre><code><span class="la-keyword">struct</span> MasterView&lt;T: <span class="la-type">MasterPresenting</span>&gt;: <span class="la-type">View</span> { <span class="la-comment">// hi there T!</span>
-    <span class="la-keyword">@ObservedObject var</span> presenter: <span class="la-type">T</span>
-  
-    {...}
-}
-</code></pre><p>We still don't want <code>MasterView</code> to know what <code>MasterPresenting</code> we are injecting, so let's keep using the <code>MasterPresenting</code> protocol, this time as a generic one (<code>&lt;T: MasterPresenting&gt;</code>).</p><p>Perfect, now we can go to <code>MasterPresenter</code>'s coordinator and add the <code>presentDetailView</code> function. Remember we had a <code>MasterCoordinator</code> protocol which was empty? Not anymore:</p><pre><code><span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
+</code></pre><p>We have to return a SwiftUI View, which can only be used as a generic constraint, so we need to add an <code>associatedtype</code> in our <code>MasterPresenting</code> protocol. Notice how with the <code>some</code> keyword in <code>MasterPresenter</code> we don't have to specify the <code>associatedtype</code>.</p><p>Perfect, take a look at <code>coordinator.presentDetailView(:)</code>, it's returning a View. Now we can go to <code>MasterPresenter</code>'s coordinator and add the <code>presentDetailView</code> function.</p><p>Remember we had a <code>MasterCoordinator</code> protocol which was empty? Not anymore:</p><pre><code><span class="la-keyword">protocol</span> MasterCoordinator: <span class="la-type">Coordinator</span> {}
 
 <span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">func</span> presentDetailView(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
@@ -271,7 +266,7 @@
 <span class="la-comment">// MARK: Factory</span>
 
 <span class="la-keyword">enum</span> MasterFactory {
-    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">Coordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
+    <span class="la-keyword">static func</span> make(with coordinator: <span class="la-type">MasterCoordinator</span>) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
         <span class="la-keyword">let</span> presenter = <span class="la-type">MasterPresenter</span>(coordinator: coordinator)
         <span class="la-keyword">let</span> view = <span class="la-type">MasterView</span>(presenter: presenter)
         <span class="la-keyword">return</span> view
@@ -296,7 +291,7 @@
     <span class="la-keyword">private let</span> coordinator: <span class="la-type">MasterCoordinator</span>
     
     <span class="la-keyword">init</span>(coordinator: <span class="la-type">MasterCoordinator</span>) {
-        <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator
+        <span class="la-keyword">self</span>.<span class="la-property">coordinator</span> = coordinator 
         <span class="la-keyword">self</span>.<span class="la-property">viewModel</span> = <span class="la-type">MasterViewModel</span>(date: <span class="la-type">Date</span>())
     }
   
