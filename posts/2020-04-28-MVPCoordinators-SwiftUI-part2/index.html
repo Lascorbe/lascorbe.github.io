@@ -414,7 +414,7 @@
 
 <span class="la-keyword">extension</span> <span class="la-type">MasterCoordinator</span> {
     <span class="la-keyword">func</span> presentDetailView(isPresented: <span class="la-type">Binding</span>&lt;<span class="la-type">Bool</span>&gt;) -&gt; <span class="la-keyword">some</span> <span class="la-type">View</span> {
-        <span class="la-keyword">let</span> coordinator = <span class="la-type">RootMasterCoordinator</span>(isPresented: isPresented)
+        <span class="la-keyword">let</span> coordinator = <span class="la-type">NavigationDetailCoordinator</span>(isPresented: isPresented)
         <span class="la-keyword">return</span> <span class="la-call">coordinate</span>(to: coordinator)
     }
 }
