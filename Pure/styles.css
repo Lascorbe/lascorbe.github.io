@@ -186,8 +186,10 @@ h3 {
     margin: 0;
 }
 .mini-post-tags {
-    margin-top: 0.5em;
-    margin-bottom: 0.3em;
+    padding-top: 0.5em;
+    padding-bottom: 0.3em;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 .mini-post-tags a:hover,
 .mini-post-tags a:focus {
@@ -268,8 +270,10 @@ h3 {
     margin: 0;
 }
 .post-tags {
-    margin-top: 0.8em;
-    margin-bottom: 1.5em;
+    padding-top: 0.8em;
+    padding-bottom: 1.5em;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 .post-tags a {
     text-decoration: none;
